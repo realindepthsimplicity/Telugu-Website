@@ -1,0 +1,2042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telugu Learning Website</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0c;
+      color: white;
+    }
+    .telugu-text {
+      font-family: 'Noto Sans Telugu', 'Gautami', 'Akshar', sans-serif;
+    }
+    .display-text {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div id="root" style="min-height: 100vh; background: #0a0a0c; color: white; padding: 20px;">Loading...</div>
+  <script type="text/babel">
+    const { useState } = React;
+    
+    // Fallback if Motion doesn't load
+    const Motion = window.FramerMotion || window.framerMotion || window.Motion;
+    let motion, AnimatePresence;
+    if (Motion) {
+      motion = Motion.motion;
+      AnimatePresence = Motion.AnimatePresence;
+    } else {
+      motion = new Proxy({}, { get: (target, prop) => prop });
+      AnimatePresence = ({ children }) => children;
+    }
+
+    const BLUE = "#4c8dff";
+    const ORANGE = "#ff8a3d";
+    const PURPLE = "#b48bff";
+
+    // Dark mode colors
+    const DARK_BG = "#0a0a0c";
+    const DARK_TEXT = "white";
+    const DARK_TEXT_SECONDARY = "rgba(255,255,255,0.5)";
+    const DARK_BORDER = "rgba(255,255,255,0.1)";
+
+    // Light mode colors
+    const LIGHT_BG = "#ffffff";
+    const LIGHT_TEXT = "#1a1a1a";
+    const LIGHT_TEXT_SECONDARY = "rgba(0,0,0,0.6)";
+    const LIGHT_BORDER = "rgba(0,0,0,0.1)";
+
+    /* ------------------------- Page 1: the కో particle ------------------------- */
+
+    const units = [
+      {
+        id: "unit-1",
+        audio: "/audio/vanta_cheyi.m4a",
+        teluguParts: [{ text: "వంట చేయి", color: BLUE }],
+        translit: "vanta cheyi",
+        englishParts: [{ text: "cook food", color: BLUE }],
+      },
+      {
+        id: "unit-2",
+        audio: "/audio/vanta_chesuko.m4a",
+        teluguParts: [
+          { text: "వంట చేసు", color: BLUE },
+          { text: "కో", color: ORANGE },
+        ],
+        translit: "vanta chesuko",
+        englishParts: [
+          { text: "cook food ", color: BLUE },
+          { text: "for yourself", color: ORANGE },
+        ],
+      },
+      {
+        id: "unit-3",
+        audio: "/audio/chaduvu.m4a",
+        teluguParts: [{ text: "చదువు", color: BLUE }],
+        translit: "chaduvu",
+        englishParts: [{ text: "read", color: BLUE }],
+      },
+      {
+        id: "unit-4",
+        audio: "/audio/chaduvuko.m4a",
+        teluguParts: [
+          { text: "చదువు", color: BLUE },
+          { text: "కో", color: ORANGE },
+        ],
+        translit: "chaduvuko",
+        englishParts: [
+          { text: "read ", color: BLUE },
+          { text: "for yourself", color: ORANGE },
+          { text: ";", color: ORANGE },
+          { text: " study", color: BLUE },
+        ],
+      },
+      {
+        id: "unit-5",
+        audio: "/audio/techchu.m4a",
+        teluguParts: [{ text: "తెచ్చు", color: BLUE }],
+        translit: "techchu",
+        englishParts: [{ text: "bring", color: BLUE }],
+      },
+      {
+        id: "unit-6",
+        audio: "/audio/techchuko.m4a",
+        teluguParts: [
+          { text: "తెచ్చు", color: BLUE },
+          { text: "కో", color: ORANGE },
+        ],
+        translit: "techchuko",
+        englishParts: [
+          { text: "bring ", color: BLUE },
+          { text: "for yourself", color: ORANGE },
+        ],
+      },
+      {
+        id: "unit-7",
+        audio: "/audio/pettu.m4a",
+        teluguParts: [{ text: "పెట్టు", color: BLUE }],
+        translit: "pettu",
+        englishParts: [{ text: "keep", color: BLUE }],
+      },
+      {
+        id: "unit-8",
+        audio: "/audio/pettuko.m4a",
+        teluguParts: [
+          { text: "పెట్టు", color: BLUE },
+          { text: "కో", color: ORANGE },
+        ],
+        translit: "pettuko",
+        englishParts: [
+          { text: "keep ", color: BLUE },
+          { text: "for yourself", color: ORANGE },
+        ],
+      },
+    ];
+
+    const Unit = ({ unit, index, colors, darkMode }) => {
+      const [loading, setLoading] = useState(false);
+
+      const playAudio = async () => {
+        if (loading) return;
+        setLoading(true);
+        try {
+          const audio = new Audio(unit.audio);
+          audio.onended = () => setLoading(false);
+          audio.onerror = () => setLoading(false);
+          await audio.play();
+        } catch (e) {
+          console.error("Audio playback failed", e);
+          setLoading(false);
+        }
+      };
+
+      return (
+        <motion.div
+          data-testid={unit.id}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="relative w-full max-w-3xl"
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+        >
+          <div style={{ 
+            position: 'absolute', 
+            left: '-16px', 
+            top: '50%', 
+            transform: 'translateY(-50%)',
+            fontSize: '14px',
+            fontWeight: '500',
+            letterSpacing: '0.3em',
+            color: colors.textSecondary,
+            display: window.innerWidth >= 768 ? 'block' : 'none'
+          }}>
+            {String(index + 1).padStart(2, "0")}
+          </div>
+
+          <div style={{
+            borderRadius: '24px',
+            border: `1px solid ${colors.border}`,
+            background: colors.cardBg,
+            padding: '40px 56px',
+            backdropFilter: 'blur(8px)',
+            width: '100%',
+            maxWidth: '768px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px' }}>
+              <div
+                data-testid={`${unit.id}-telugu`}
+                className="telugu-text"
+                style={{ fontSize: '48px', lineHeight: 1.1, color: colors.text }}
+              >
+                {unit.teluguParts.map((p, i) => (
+                  <span key={i} style={{ color: p.color }}>
+                    {p.text}
+                  </span>
+                ))}
+              </div>
+
+              <button
+                data-testid={`${unit.id}-audio-btn`}
+                onClick={playAudio}
+                disabled={loading}
+                aria-label={`Play pronunciation of ${unit.translit}`}
+                style={{
+                  marginTop: '8px',
+                  display: 'flex',
+                  height: '48px',
+                  width: '48px',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: '50%',
+                  border: `1px solid ${colors.border}`,
+                  background: colors.cardBg,
+                  color: colors.textSecondary,
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.3s',
+                  flexShrink: 0
+                }}
+                onMouseOver={(e) => {
+                  if (!loading) {
+                    e.target.style.borderColor = 'rgba(255,138,61,0.6)';
+                    e.target.style.background = 'rgba(255,138,61,0.1)';
+                    e.target.style.color = '#ff8a3d';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.borderColor = colors.border;
+                  e.target.style.background = colors.cardBg;
+                  e.target.style.color = colors.textSecondary;
+                }}
+              >
+                {loading ? (
+                  <span style={{ animation: 'spin 1s linear infinite' }}>⟳</span>
+                ) : (
+                  <span>🔊</span>
+                )}
+              </button>
+            </div>
+
+            <div
+              data-testid={`${unit.id}-translit`}
+              style={{ marginTop: '12px', fontSize: '18px', fontStyle: 'italic', color: colors.textSecondary }}
+            >
+              {unit.translit}
+            </div>
+
+            <div style={{ margin: '28px 0', height: '1px', width: '64px', background: colors.border }} />
+
+            <div
+              data-testid={`${unit.id}-english`}
+              className="display-text"
+              style={{ fontSize: '24px', fontWeight: 600 }}
+            >
+              {unit.englishParts.map((p, i) => (
+                <span key={i} style={{ color: p.color }}>
+                  {p.text}
+                </span>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      );
+    };
+
+    const KoLesson = ({ colors, darkMode }) => (
+      <div>
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          style={{ marginBottom: '56px', textAlign: 'center' }}
+        >
+          <h1 className="display-text" style={{ fontSize: '48px', fontWeight: 800, lineHeight: 1.1, color: colors.text }}>
+            The <span className="telugu-text" style={{ color: ORANGE }}>కో</span> particle
+          </h1>
+          <p style={{ textAlign: 'left', maxWidth: '448px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary }}>
+            One small suffix turns an action into something you do{" "}
+            <span style={{ color: ORANGE }}>for yourself</span>. Tap the speaker on any
+            card to hear it spoken.
+          </p>
+        </motion.header>
+
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '40px', width: '100%' }}>
+          {units.map((unit, i) => (
+            <Unit key={unit.id} unit={unit} index={i} colors={colors} darkMode={darkMode} />
+          ))}
+        </div>
+
+        <div style={{ marginTop: '64px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '32px', fontSize: '14px', color: colors.textSecondary }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ height: '12px', width: '12px', borderRadius: '50%', backgroundColor: BLUE }} />
+            base meaning
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ height: '12px', width: '12px', borderRadius: '50%', backgroundColor: ORANGE }} />
+            reflexive particle కో
+          </div>
+        </div>
+      </div>
+    );
+
+    /* ---------------------- Page 2: building letters (గుణింతం) ---------------------- */
+
+    const CONSONANT = "క";
+    const DOTTED = "\u25CC";
+
+    const vowelRows = [
+      ["అ", null, "ka", "Pure Telugu consonants by definition require a vowel to even exist, so they automatically have the most basic vowel, 'a' అ, in their uncombined forms. To combine a consonant with అ, you do not change it at all! That is why అ lacks a combining, subordinate form."],
+      ["ఆ", "\u0C3E", "kā", null],
+      ["ఇ", "\u0C3F", "ki", null],
+      ["ఈ", "\u0C40", "kī", null],
+      ["ఉ", "\u0C41", "ku", null],
+      ["ఊ", "\u0C42", "kū", null],
+      ["ఋ", "\u0C43", "kr", "The long r vowel (ౠ) is not included here as it is practically extinct in modern Telugu."],
+      ["ఎ", "\u0C46", "ke", null],
+      ["ఏ", "\u0C47", "kē", null],
+      ["ఐ", "\u0C48", "kai", null],
+      ["ఒ", "\u0C4A", "ko", null],
+      ["ఓ", "\u0C4B", "kō", null],
+      ["ఔ", "\u0C4C", "kau", null],
+    ];
+
+    const Op = ({ children, colors }) => (
+      <span className="display-text" style={{ userSelect: 'none', fontSize: '24px', fontWeight: 300, color: colors.textSecondary }}>
+        {children}
+      </span>
+    );
+
+    const LetterRow = ({ vowel, matra, roman, note, index, colors, darkMode }) => {
+      const combiningForm = matra ? DOTTED + matra : "అ";
+      return (
+        <motion.div
+          data-testid={`row-${index + 1}`}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="relative w-full max-w-3xl"
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}
+        >
+          <div style={{ 
+            position: 'absolute', 
+            left: '-16px', 
+            top: '50%', 
+            transform: 'translateY(-50%)',
+            fontSize: '14px',
+            fontWeight: '500',
+            letterSpacing: '0.3em',
+            color: colors.textSecondary,
+            display: window.innerWidth >= 768 ? 'block' : 'none'
+          }}>
+            {String(index + 1).padStart(2, "0")}
+          </div>
+
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            overflowX: 'auto',
+            borderRadius: '16px',
+            border: `1px solid ${colors.border}`,
+            background: colors.cardBg,
+            padding: '24px 40px',
+            backdropFilter: 'blur(8px)',
+            width: '100%',
+            maxWidth: '768px'
+          }}>
+            <span
+              className="telugu-text"
+              style={{ fontSize: '48px', color: BLUE, flexShrink: 0 }}
+            >
+              {CONSONANT}
+            </span>
+
+            <Op colors={colors}>+</Op>
+
+            <span
+              className="telugu-text"
+              style={{ fontSize: '48px', color: PURPLE, flexShrink: 0 }}
+            >
+              {vowel}
+            </span>
+
+            <Op colors={colors}>→</Op>
+
+            <span
+              className="telugu-text"
+              style={{ fontSize: '48px', color: ORANGE, flexShrink: 0 }}
+            >
+              {combiningForm}
+            </span>
+
+            <Op colors={colors}>=</Op>
+
+            <span
+              data-testid={`row-${index + 1}-result`}
+              className="telugu-text"
+              style={{ fontSize: '56px', flexShrink: 0 }}
+            >
+              <span style={{ color: BLUE }}>{CONSONANT}</span>
+              {matra && <span style={{ color: PURPLE }}>{matra}</span>}
+            </span>
+
+            <span style={{ marginLeft: 'auto', flexShrink: 0, paddingLeft: '16px', fontSize: '18px', fontStyle: 'italic', color: colors.textSecondary }}>
+              {roman}
+            </span>
+          </div>
+          {note && (
+            <p style={{ marginTop: '12px', fontSize: '14px', color: colors.textSecondary, textAlign: 'center', maxWidth: '600px' }}>
+              {note}
+            </p>
+          )}
+        </motion.div>
+      );
+    };
+
+    const LettersLesson = ({ colors, darkMode, stickyPanel, setStickyPanel }) => {
+
+      return (
+      <div>
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          style={{ marginBottom: '56px', textAlign: 'center' }}
+        >
+          <h1 className="display-text" style={{ fontSize: '48px', fontWeight: 800, lineHeight: 1.1 }}>
+            Building letters
+          </h1>
+          <h2 className="display-text" style={{ fontSize: '24px', fontWeight: 600, marginTop: '8px', color: colors.textSecondary }}>
+            Combining vowels
+          </h2>
+          <p style={{ textAlign: 'left', maxWidth: '512px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary }}>
+            With the exception of semivowels, all Telugu consonants need to be combined with a vowel in order to exist. In their pure form, this is always the short a vowel, అ. But what if we want a different vowel sound? This is where the orange combining forms of the vowels from the alphabet become important. To change the vowel of a consonant with the vowel combining property, you take the consonant and the vowel you want to combine to it. You find the combining form of the vowel. Then, you attach it to the consonant. Notice how some combining forms are added above the pure consonant, and some beside it. If the combining form is the "above" type and the consonant has a check mark on it, then the combining form replaces the check mark (but does not if it is a "beside" type). Take a look at how క combines with different vowels.
+          </p>
+        </motion.header>
+
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', width: '100%' }}>
+          {vowelRows.map(([vowel, matra, roman, note], i) => (
+            <LetterRow key={vowel + i} vowel={vowel} matra={matra} roman={roman} note={note} index={i} colors={colors} darkMode={darkMode} />
+          ))}
+        </div>
+
+        <div style={{ marginTop: '64px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '32px', fontSize: '14px', color: colors.textSecondary }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ height: '12px', width: '12px', borderRadius: '50%', backgroundColor: BLUE }} />
+            consonant క
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ height: '12px', width: '12px', borderRadius: '50%', backgroundColor: PURPLE }} />
+            vowel &amp; its sign
+          </div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          style={{ marginTop: '96px', textAlign: 'center' }}
+        >
+          <h3 className="display-text" style={{ fontSize: '32px', fontWeight: 700, marginBottom: '24px', color: colors.text }}>
+            Irregular vowel combinations
+          </h3>
+          <p style={{ textAlign: 'left', maxWidth: '640px', margin: '0 auto 32px', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+            While most consonants simply take the vowel diacritic directly, some consonants have special rules when combining with certain vowels. These irregular combinations don't follow the standard pattern of just attaching the vowel sign to the consonant.
+          </p>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '16px', width: '100%' }}>
+            {[
+              { consonant: "గ", vowel: "ి", result: "గి", translit: "gi" },
+              { consonant: "గ", vowel: "ీ", result: "గీ", translit: "gī" },
+              { consonant: "థ", vowel: "ి", result: "థి", translit: "thi" },
+              { consonant: "థ", vowel: "ీ", result: "థీ", translit: "thī" },
+              { consonant: "ద", vowel: "ి", result: "ది", translit: "di" },
+              { consonant: "ద", vowel: "ీ", result: "దీ", translit: "dī" },
+              { consonant: "ధ", vowel: "ి", result: "ధి", translit: "dhi" },
+              { consonant: "ధ", vowel: "ీ", result: "ధీ", translit: "dhī" },
+              { consonant: "మ", vowel: "ి", result: "మి", translit: "mi" },
+              { consonant: "మ", vowel: "ీ", result: "మీ", translit: "mī" },
+              { consonant: "య", vowel: "ి", result: "యి", translit: "yi" },
+              { consonant: "య", vowel: "ీ", result: "యీ", translit: "yī" },
+              { consonant: "మ", vowel: "ొ", result: "మొ", translit: "mo" },
+              { consonant: "మ", vowel: "ో", result: "మో", translit: "mō" },
+              { consonant: "య", vowel: "ొ", result: "యొ", translit: "yo" },
+              { consonant: "య", vowel: "ో", result: "యో", translit: "yō" },
+              { consonant: "వ", vowel: "ి", result: "వి", translit: "vi" },
+              { consonant: "వ", vowel: "ీ", result: "వీ", translit: "vī" },
+              { consonant: "హ", vowel: "ా", result: "హా", translit: "hā" },
+              { consonant: "హ", vowel: "ొ", result: "హొ", translit: "ho" },
+              { consonant: "హ", vowel: "ో", result: "హో", translit: "hō" },
+            ].map((combo, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.02 }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  borderRadius: '12px',
+                  border: `1px solid ${colors.border}`,
+                  background: colors.cardBg,
+                  padding: '16px 24px',
+                  backdropFilter: 'blur(8px)'
+                }}
+              >
+                <span className="telugu-text" style={{ fontSize: '36px', color: BLUE }}>
+                  {combo.consonant}
+                </span>
+                <Op colors={colors}>+</Op>
+                <span className="telugu-text" style={{ fontSize: '36px', color: PURPLE }}>
+                  {combo.vowel}
+                </span>
+                <Op colors={colors}>=</Op>
+                <span className="telugu-text" style={{ fontSize: '42px' }}>
+                  {combo.result}
+                </span>
+                <span style={{ fontSize: '14px', fontStyle: 'italic', color: colors.textSecondary, marginLeft: '4px' }}>
+                  {combo.translit}
+                </span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          style={{ marginTop: '96px', textAlign: 'center' }}
+        >
+          <h3 className="display-text" style={{ fontSize: '32px', fontWeight: 700, marginBottom: '24px', color: colors.text }}>
+            Example words
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '48px', width: '100%' }}>
+            {[
+              {
+                word: "తెలుగు",
+                translit: "telugu",
+                meaning: "Telugu (the language)",
+                breakdown: [
+                  { consonant: "త", matra: "ె", result: "తె" },
+                  { consonant: "ల", matra: "ు", result: "లు" },
+                  { consonant: "గ", matra: "ు", result: "గు" },
+                ]
+              },
+              {
+                word: "పేరు",
+                translit: "pēru",
+                meaning: "name",
+                breakdown: [
+                  { consonant: "ప", matra: "ే", result: "పే" },
+                  { consonant: "ర", matra: "ు", result: "రు" },
+                ]
+              },
+              {
+                word: "జీవితం",
+                translit: "jīvitam",
+                meaning: "life",
+                breakdown: [
+                  { consonant: "జ", matra: "ీ", result: "జీ" },
+                  { consonant: "వ", matra: "ి", result: "వి" },
+                  { consonant: "త", matra: "అ", result: "త" },
+                ],
+                note: "Careful! Notice how త remained uncombined because it has the default \"a\" అ vowel that consonants do not change their pure form for. Also notice how the semivowel ◌ం, the anusvara, has the \"m\" sound due to its word-final placement. The anusvara isn't in the combining equations since semivowels are always consonant sounds in isolation and don't have the combining property!"
+              },
+            ].map((wordData, wordIndex) => (
+              <div key={wordIndex} style={{ width: '100%', maxWidth: '600px' }}>
+                <div style={{ marginBottom: '24px' }}>
+                  <span className="telugu-text" style={{ fontSize: '48px', color: BLUE, fontWeight: 600 }}>
+                    {wordData.word}
+                  </span>
+                  <span style={{ fontSize: '18px', color: colors.textSecondary, marginLeft: '12px', fontStyle: 'italic' }}>
+                    {wordData.translit}
+                  </span>
+                  <p style={{ fontSize: '16px', color: colors.textSecondary, marginTop: '8px' }}>
+                    {wordData.meaning}
+                  </p>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+                  {wordData.breakdown.map((char, charIndex) => (
+                    <div key={charIndex} style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      fontSize: '32px',
+                      color: colors.textSecondary
+                    }}>
+                      <span className="telugu-text" style={{ color: BLUE }}>{char.consonant}</span>
+                      <Op colors={colors}>+</Op>
+                      <span className="telugu-text" style={{ color: ORANGE }}>{DOTTED + char.matra}</span>
+                      <Op colors={colors}>=</Op>
+                      <span className="telugu-text" style={{ color: colors.text }}>{char.result}</span>
+                    </div>
+                  ))}
+                </div>
+                {wordData.note && (
+                  <p style={{ fontSize: '14px', color: colors.textSecondary, marginTop: '16px', fontStyle: 'italic' }}>
+                    {wordData.note}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          style={{ marginTop: '96px', textAlign: 'center', padding: '32px', borderRadius: '16px', background: darkMode ? 'rgba(180,139,255,0.1)' : 'rgba(180,139,255,0.05)', border: `1px solid ${colors.border}` }}
+        >
+          <p style={{ fontSize: '18px', color: colors.textSecondary, marginBottom: '16px' }}>
+            Put your knowledge to the test!
+          </p>
+          <p className="telugu-text" style={{ fontSize: '32px', color: colors.text, marginBottom: '16px', lineHeight: 1.5 }}>
+            ఇది తెలుగు లిపి. భారతదేశంలో ఉండే లిపులలో చాలా అందమైనది అంటే ఇదే.
+          </p>
+          <p style={{ fontSize: '16px', color: colors.textSecondary, maxWidth: '560px', margin: '0 auto' }}>
+            Try reading it aloud using what you've just learned about combining consonants and vowels! Look back at the previous sections if you need help understanding how the letters combine.
+          </p>
+          <button
+            onClick={() => setStickyPanel("ఇది తెలుగు లిపి. భారతదేశంలో ఉండే లిపులలో చాలా అందమైనది అంటే ఇదే.")}
+            style={{
+              marginTop: '16px',
+              padding: '10px 20px',
+              borderRadius: '8px',
+              border: `1px solid ${colors.border}`,
+              background: colors.cardBg,
+              color: colors.text,
+              cursor: 'pointer',
+              fontSize: '14px',
+              transition: 'all 0.3s'
+            }}
+            onMouseOver={(e) => {
+              e.target.style.background = darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.background = colors.cardBg;
+            }}
+          >
+            Keep phrase visible while scrolling up
+          </button>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          style={{ marginTop: '96px', textAlign: 'center' }}
+        >
+          <h3 className="display-text" style={{ fontSize: '32px', fontWeight: 700, marginBottom: '24px', color: colors.text }}>
+            Combining consonants
+          </h3>
+          <p style={{ textAlign: 'left', maxWidth: '640px', margin: '0 auto 32px', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+            So knowing how Telugu consonants operate, let's say we have a word with a consonant cluster, like "nidra" meaning sleep. So we run into a problem here. The final part of the word, "dra", can't be formed, since it has a d in isolation followed by a "ra" sound. But we know that d, as a regular consonant, can't be in isolation and must combine with a vowel. So, how does Telugu handle this? Well, it handles this by treating the core combination as "da" and having the "r" combined with the "da" to have it introduced in between the consonant sound and the vowel. So if "da" is the letter, and d is the consonant and a the vowel, the r is introduced in between in pronunciation and in writing is represented with the "ra" combining form having combined with the "da". The combining forms come from the subordinate forms shown in orange back in the 'alphabet' page for the consonants. Here are a few examples of how consonants combine, so you get the gist.
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', width: '100%' }}>
+            {[
+              { consonant1: "ద", consonant2: "ర", vattu: "్ర", result: "ద్ర", translit: "dra" },
+              { consonant1: "క", consonant2: "ష", vattu: "్ష", result: "క్ష", translit: "kṣha" },
+            ].map((combo, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  overflowX: 'auto',
+                  borderRadius: '16px',
+                  border: `1px solid ${colors.border}`,
+                  background: colors.cardBg,
+                  padding: '24px 40px',
+                  backdropFilter: 'blur(8px)',
+                  width: '100%',
+                  maxWidth: '768px'
+                }}
+              >
+                <span className="telugu-text" style={{ fontSize: '48px', color: BLUE, flexShrink: 0 }}>
+                  {combo.consonant1}
+                </span>
+                <Op colors={colors}>+</Op>
+                <span className="telugu-text" style={{ fontSize: '48px', color: PURPLE, flexShrink: 0 }}>
+                  {combo.consonant2}
+                </span>
+                <Op colors={colors}>→</Op>
+                <span className="telugu-text" style={{ fontSize: '48px', color: ORANGE, flexShrink: 0 }}>
+                  {DOTTED + combo.vattu}
+                </span>
+                <Op colors={colors}>=</Op>
+                <span className="telugu-text" style={{ fontSize: '56px', flexShrink: 0 }}>
+                  {combo.result}
+                </span>
+                <span style={{ marginLeft: 'auto', flexShrink: 0, paddingLeft: '16px', fontSize: '18px', fontStyle: 'italic', color: colors.textSecondary }}>
+                  {combo.translit}
+                </span>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            style={{ marginTop: '96px', textAlign: 'center' }}
+          >
+            <h3 className="display-text" style={{ fontSize: '32px', fontWeight: 700, marginBottom: '24px', color: colors.text }}>
+              Example words
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '48px', width: '100%' }}>
+              {[
+                {
+                  word: "నిద్ర",
+                  translit: "nidra",
+                  meaning: "sleep",
+                  breakdown: [
+                    { consonant1: "ద", consonant2: "ర", vattu: "్ర", result: "ద్ర", translit: "da + ra = dra" },
+                  ]
+                },
+                {
+                  word: "సూర్యుడు",
+                  translit: "sūryuḍu",
+                  meaning: "sun",
+                  breakdown: [
+                    { consonant1: "రు", consonant2: "య", vattu: "్య", result: "ర్యు", translit: "ru + ya = ryu" },
+                  ]
+                },
+                {
+                  word: "కృత్రిమ",
+                  translit: "kṛtrima",
+                  meaning: "artificial",
+                  breakdown: [
+                    { consonant1: "తి", consonant2: "ర", vattu: "్ర", result: "త్రి", translit: "ti + ra = tri" },
+                  ]
+                },
+                {
+                  word: "రాష్ట్రం",
+                  translit: "rāṣhṭram",
+                  meaning: "state (within a country)",
+                  breakdown: [
+                    { consonant1: "ష", consonant2: "ట", consonant3: "ర", vattu: "్ట్ర", result: "ష్ట్ర", translit: "ṣa + ṭa + ra = ṣṭra" },
+                  ],
+                  note: "Notice how the \"ra\" now has a different combining form, with a curl at the end. This is to account for the fact that there is another combined consonant that it is competing with, and that it is pronounced last in order, with the whole form first, then the first combined consonant, then the \"ra\". The other consonants do not do this, and instead make this distinction by having the combining form of the first combined consonant in the pronunciation order be closer to the whole letter and the other a little farther."
+                },
+              ].map((wordData, wordIndex) => (
+                <div key={wordIndex} style={{ width: '100%', maxWidth: '600px' }}>
+                  <div style={{ marginBottom: '24px' }}>
+                    <span className="telugu-text" style={{ fontSize: '48px', color: BLUE, fontWeight: 600 }}>
+                      {wordData.word}
+                    </span>
+                    <span style={{ fontSize: '18px', color: colors.textSecondary, marginLeft: '12px', fontStyle: 'italic' }}>
+                      {wordData.translit}
+                    </span>
+                    <p style={{ fontSize: '16px', color: colors.textSecondary, marginTop: '8px' }}>
+                      {wordData.meaning}
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+                    {wordData.breakdown.map((char, charIndex) => (
+                      <div key={charIndex} style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        fontSize: '32px',
+                        color: colors.textSecondary
+                      }}>
+                        <span className="telugu-text" style={{ color: BLUE }}>{char.consonant1}</span>
+                        <Op colors={colors}>+</Op>
+                        <span className="telugu-text" style={{ color: PURPLE }}>{char.consonant2}</span>
+                        {char.consonant3 && (
+                          <>
+                            <Op colors={colors}>+</Op>
+                            <span className="telugu-text" style={{ color: PURPLE }}>{char.consonant3}</span>
+                          </>
+                        )}
+                        <Op colors={colors}>→</Op>
+                        <span className="telugu-text" style={{ color: ORANGE, fontFamily: char.vattu.includes('్ర') && !char.vattu.includes('్ట్ర') ? 'Gautami, sans-serif' : 'Noto Sans Telugu, sans-serif' }}>{DOTTED + char.vattu}</span>
+                        <Op colors={colors}>=</Op>
+                        <span className="telugu-text" style={{ color: colors.text }}>{char.result}</span>
+                        <span style={{ marginLeft: '12px', fontSize: '14px', color: colors.textSecondary, fontStyle: 'italic' }}>
+                          {char.translit}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  {wordData.note && (
+                    <p style={{ fontSize: '14px', color: colors.textSecondary, marginTop: '16px', fontStyle: 'italic' }}>
+                      {wordData.note}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          style={{ marginTop: '96px', textAlign: 'center', padding: '32px', borderRadius: '16px', background: darkMode ? 'rgba(180,139,255,0.1)' : 'rgba(180,139,255,0.05)', border: `1px solid ${colors.border}` }}
+        >
+          <p style={{ fontSize: '18px', color: colors.textSecondary, marginBottom: '16px' }}>
+            Put your knowledge to the test!
+          </p>
+          <p className="telugu-text" style={{ fontSize: '32px', color: colors.text, marginBottom: '16px', lineHeight: 1.5 }}>
+            అమ్మ, నాకు చాలా ఆకలిగా ఉంది. ఎప్పుడు వంట అవుతుంది?
+          </p>
+          <p style={{ fontSize: '16px', color: colors.textSecondary, maxWidth: '560px', margin: '0 auto' }}>
+            This one includes a consonant cluster — see if you can sound out the whole sentence now that you know how vattulu work!
+          </p>
+          <button
+            onClick={() => setStickyPanel("అమ్మ, నాకు చాలా ఆకలిగా ఉంది. ఎప్పుడు వంట అవుతుంది?")}
+            style={{
+              marginTop: '16px',
+              padding: '10px 20px',
+              borderRadius: '8px',
+              border: `1px solid ${colors.border}`,
+              background: colors.cardBg,
+              color: colors.text,
+              cursor: 'pointer',
+              fontSize: '14px',
+              transition: 'all 0.3s'
+            }}
+            onMouseOver={(e) => {
+              e.target.style.background = darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.background = colors.cardBg;
+            }}
+          >
+            Keep phrase visible while scrolling up
+          </button>
+        </motion.div>
+      </div>
+      );
+    };
+
+    /* ---------------------- Page 3: building consonants ---------------------- */
+
+    const semivowelData = [
+      { char: "ం", translit: "ṁ (anusvara)", hasNote: true, noteType: "anusvara", audio: "/audio/anusvara.m4a" },
+      { char: "ః", translit: "ḥ (visarga)", hasNote: true, noteType: "visarga", audio: "/audio/visarga.m4a" },
+    ];
+
+    const SemivowelCard = ({ char, translit, audio, index, hasNote, noteType, onNoteClick, colors, darkMode }) => {
+      const [loading, setLoading] = useState(false);
+
+      const playAudio = async (e) => {
+        e.stopPropagation();
+        if (loading) return;
+        setLoading(true);
+        try {
+          const audioEl = new Audio(audio);
+          audioEl.onended = () => setLoading(false);
+          audioEl.onerror = () => setLoading(false);
+          await audioEl.play();
+        } catch (e) {
+          console.error("Audio playback failed", e);
+          setLoading(false);
+        }
+      };
+
+      return (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.4, delay: index * 0.05 }}
+          onClick={() => hasNote && onNoteClick(noteType)}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            borderRadius: '16px',
+            border: `1px solid ${colors.border}`,
+            background: colors.cardBg,
+            padding: '20px 24px',
+            backdropFilter: 'blur(8px)',
+            cursor: hasNote ? 'pointer' : 'default',
+            position: 'relative'
+          }}
+        >
+          <button
+            onClick={playAudio}
+            disabled={loading}
+            style={{
+              position: 'absolute',
+              top: '8px',
+              right: '8px',
+              display: 'flex',
+              height: '32px',
+              width: '32px',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '50%',
+              border: `1px solid ${colors.border}`,
+              background: colors.cardBg,
+              color: colors.textSecondary,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              fontSize: '14px',
+              zIndex: 10
+            }}
+          >
+            {loading ? '⟳' : '🔊'}
+          </button>
+          {hasNote && (
+            <span style={{
+              position: 'absolute',
+              top: '8px',
+              right: '48px',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              color: ORANGE
+            }}>!</span>
+          )}
+          <span className="telugu-text" style={{ fontSize: '48px', color: BLUE }}>
+            {char}
+          </span>
+          <span style={{ marginTop: '8px', fontSize: '14px', fontStyle: 'italic', color: colors.textSecondary }}>{translit}</span>
+        </motion.div>
+      );
+    };
+
+    const vowelData = [
+      { vowel: "అ", matra: null, translit: "a", audio: "/audio/a recording.m4a" },
+      { vowel: "ఆ", matra: "ా", translit: "ā", audio: "/audio/aa recording.m4a" },
+      { vowel: "ఇ", matra: "ి", translit: "i", audio: "/audio/ai recording.m4a" },
+      { vowel: "ఈ", matra: "ీ", translit: "ī", audio: "/audio/ii recording.m4a" },
+      { vowel: "ఉ", matra: "ు", translit: "u", audio: "/audio/u recording.m4a" },
+      { vowel: "ఊ", matra: "ూ", translit: "ū", audio: "/audio/uu recording.m4a" },
+      { vowel: "ఋ", matra: "ృ", translit: "ṛ", audio: "/audio/ru recording.m4a" },
+      { vowel: "ౠ", matra: "ౄ", translit: "ṝ", audio: "/audio/ruu recording.m4a", hasNote: true, noteType: "longr" },
+      { vowel: "ఎ", matra: "ె", translit: "e", audio: "/audio/e recording.m4a" },
+      { vowel: "ఏ", matra: "ే", translit: "ē", audio: "/audio/ee recording_2.m4a" },
+      { vowel: "ఐ", matra: "ై", translit: "ai", audio: "/audio/ai recording_3.m4a" },
+      { vowel: "ఒ", matra: "ొ", translit: "o", audio: "/audio/o recording_2.m4a" },
+      { vowel: "ఓ", matra: "ో", translit: "ō", audio: "/audio/oo recording.m4a" },
+      { vowel: "ఔ", matra: "ౌ", translit: "au", audio: "/audio/au recording.m4a" },
+    ];
+
+    const VowelCard = ({ vowel, matra, translit, audio, index, hasNote, noteType, onNoteClick, colors, darkMode }) => {
+      const [loading, setLoading] = useState(false);
+
+      const playAudio = async (e) => {
+        e.stopPropagation();
+        if (loading) return;
+        setLoading(true);
+        try {
+          const audioEl = new Audio(audio);
+          audioEl.onended = () => setLoading(false);
+          audioEl.onerror = () => setLoading(false);
+          await audioEl.play();
+        } catch (e) {
+          console.error("Audio playback failed", e);
+          setLoading(false);
+        }
+      };
+
+      return (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.4, delay: index * 0.05 }}
+          onClick={() => hasNote && onNoteClick(noteType)}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            borderRadius: '16px',
+            border: `1px solid ${colors.border}`,
+            background: colors.cardBg,
+            padding: '20px 24px',
+            backdropFilter: 'blur(8px)',
+            cursor: hasNote ? 'pointer' : 'default',
+            position: 'relative'
+          }}
+        >
+          <button
+            onClick={playAudio}
+            disabled={loading}
+            style={{
+              position: 'absolute',
+              top: '8px',
+              right: '8px',
+              display: 'flex',
+              height: '32px',
+              width: '32px',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '50%',
+              border: `1px solid ${colors.border}`,
+              background: colors.cardBg,
+              color: colors.textSecondary,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              fontSize: '14px',
+              zIndex: 10
+            }}
+          >
+            {loading ? '⟳' : '🔊'}
+          </button>
+          {hasNote && (
+            <span style={{
+              position: 'absolute',
+              top: '8px',
+              right: '48px',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              color: ORANGE
+            }}>!</span>
+          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span className="telugu-text" style={{ fontSize: '48px', color: BLUE }}>
+              {vowel}
+            </span>
+            {matra && (
+              <span className="telugu-text" style={{ fontSize: '40px', color: ORANGE, marginLeft: '4px' }}>
+                {matra}
+              </span>
+            )}
+          </div>
+          <span style={{ marginTop: '8px', fontSize: '14px', fontStyle: 'italic', color: colors.textSecondary }}>{translit}</span>
+        </motion.div>
+      );
+    };
+
+    const consonantGroups = [
+      {
+        group: "Back of the mouth / Kaṇṭhya కంఠ్య",
+        consonants: [
+          { char: "క", translit: "ka", type: "unvoiced unaspirated", vattu: "్క", audio: "/audio/ka_recording.m4a" },
+          { char: "ఖ", translit: "kha", type: "unvoiced aspirated", vattu: "్ఖ", audio: "/audio/kha_recording.m4a" },
+          { char: "గ", translit: "ga", type: "voiced unaspirated", vattu: "్గ", audio: "/audio/ga_recording.m4a" },
+          { char: "ఘ", translit: "gha", type: "voiced aspirated", vattu: "్ఘ", audio: "/audio/gha_recording.m4a" },
+          { char: "ఙ", translit: "nga", type: "nasal", vattu: " ్ఙ", hasNote: true, noteType: "nga", audio: "/audio/nga recording.m4a" },
+        ],
+      },
+      {
+        group: "Tongue tip on roof of mouth / Tālavya తాలవ్య",
+        consonants: [
+          { char: "చ", translit: "ca", type: "unvoiced unaspirated", vattu: "్చ", audio: "/audio/cha recording.m4a" },
+          { char: "ఛ", translit: "cha", type: "unvoiced aspirated", vattu: "్ఛ", audio: "/audio/chha recording.m4a" },
+          { char: "జ", translit: "ja", type: "voiced unaspirated", vattu: "్జ", audio: "/audio/ja recording.m4a" },
+          { char: "ఝ", translit: "jha", type: "voiced aspirated", vattu: "్ఝ", audio: "/audio/jha recording.m4a" },
+          { char: "ఞ", translit: "ña", type: "nasal", vattu: "్ఞ", hasNote: true, noteType: "ña", audio: "/audio/ña recording.m4a" },
+        ],
+      },
+      {
+        group: "Tongue tip curled back on roof of mouth / Mūrdhanya మూర్ధన్య",
+        consonants: [
+          { char: "ట", translit: "ṭa", type: "unvoiced unaspirated", vattu: "్ట", audio: "/audio/ta_retroflex recording.m4a" },
+          { char: "ఠ", translit: "ṭha", type: "unvoiced aspirated", vattu: "్ఠ", audio: "/audio/tha_retroflex recording.m4a" },
+          { char: "డ", translit: "ḍa", type: "voiced unaspirated", vattu: "్డ", audio: "/audio/da_retroflex recording.m4a" },
+          { char: "ఢ", translit: "ḍha", type: "voiced aspirated", vattu: "్ఢ", audio: "/audio/dha_retroflex recording.m4a" },
+          { char: "ణ", translit: "ṇa", type: "nasal", vattu: "్ణ", audio: "/audio/na_retroflex_recording.m4a" },
+        ],
+      },
+      {
+        group: "Tongue tip on teeth / Dantya దంత్య",
+        consonants: [
+          { char: "త", translit: "ta", type: "unvoiced unaspirated", vattu: "్త", audio: "/audio/ta recording.m4a" },
+          { char: "థ", translit: "tha", type: "unvoiced aspirated", vattu: "్థ", audio: "/audio/tha recording.m4a" },
+          { char: "ద", translit: "da", type: "voiced unaspirated", vattu: "్ద", audio: "/audio/da recording.m4a" },
+          { char: "ధ", translit: "dha", type: "voiced aspirated", vattu: "్ధ", audio: "/audio/dha recording.m4a" },
+          { char: "న", translit: "na", type: "nasal", vattu: "్న", audio: "/audio/na recording.m4a" },
+        ],
+      },
+      {
+        group: "With the lips / Ōṣṭhya ఓష్ఠ్య",
+        consonants: [
+          { char: "ప", translit: "pa", type: "unvoiced unaspirated", vattu: "్ప", audio: "/audio/pa recording.m4a" },
+          { char: "ఫ", translit: "pha", type: "unvoiced aspirated", vattu: "్ఫ", audio: "/audio/pha recording.m4a" },
+          { char: "బ", translit: "ba", type: "voiced unaspirated", vattu: "్బ", audio: "/audio/ba recording.m4a" },
+          { char: "భ", translit: "bha", type: "voiced aspirated", vattu: "్భ", audio: "/audio/bha recording.m4a" },
+          { char: "మ", translit: "ma", type: "nasal", vattu: "్మ", audio: "/audio/ma recording.m4a" },
+        ],
+      },
+      {
+        group: "Miscellaneous / Migata మిగత",
+        consonants: [
+          { char: "య", translit: "ya", type: "semivowel", vattu: "్య", audio: "/audio/ya recording.m4a" },
+          { char: "ర", translit: "ra", type: "semivowel", vattu: ["్ర", "్ర్"], hasNote: true, noteType: "ra", audio: "/audio/ra recording.m4a" },
+          { char: "ల", translit: "la", type: "semivowel", vattu: "్ల", audio: "/audio/la recording_2.m4a" },
+          { char: "వ", translit: "va", type: "semivowel", vattu: "్వ", audio: "/audio/va recording.m4a" },
+          { char: "ళ", translit: "ḷa", type: "semivowel", vattu: "్ళ", hasNote: true, noteType: "lla", audio: "/audio/la_retroflex recording.m4a" },
+          { char: "శ", translit: "sha", type: "sibilant", vattu: "్శ", audio: "/audio/sha recording.m4a" },
+          { char: "ష", translit: "ṣha", type: "sibilant", vattu: "్ష" , hasNote: true, noteType: "shha", audio: "/audio/sha_retroflex recording.m4a" },
+          { char: "స", translit: "sa", type: "sibilant", vattu: "్స", audio: "/audio/sa recording.m4a" },
+          { char: "హ", translit: "ha", type: "aspirate", vattu: "్హ", audio: "/audio/ha recording.m4a" },
+        ],
+      },
+    ];
+
+    const ConsonantCard = ({ char, translit, type, index, vattu, hasNote, noteType, onClick, audio, colors, darkMode }) => {
+      const [loading, setLoading] = useState(false);
+
+      const playAudio = async (e) => {
+        e.stopPropagation();
+        if (loading) return;
+        setLoading(true);
+        try {
+          const audioEl = new Audio(audio);
+          audioEl.onended = () => setLoading(false);
+          audioEl.onerror = () => setLoading(false);
+          await audioEl.play();
+        } catch (err) {
+          console.error("Audio playback failed", err);
+          setLoading(false);
+        }
+      };
+
+      return (
+        <motion.div
+          data-testid={`consonant-${index}`}
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.4, delay: index * 0.05 }}
+          onClick={onClick}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            borderRadius: '16px',
+            border: `1px solid ${colors.border}`,
+            background: colors.cardBg,
+            padding: '20px 24px',
+            backdropFilter: 'blur(8px)',
+            cursor: hasNote ? 'pointer' : 'default',
+            position: 'relative'
+          }}
+        >
+          <button
+            onClick={playAudio}
+            disabled={loading}
+            style={{
+              position: 'absolute',
+              top: '8px',
+              right: '8px',
+              display: 'flex',
+              height: '32px',
+              width: '32px',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '50%',
+              border: `1px solid ${colors.border}`,
+              background: colors.cardBg,
+              color: colors.textSecondary,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              fontSize: '14px',
+              zIndex: 10
+            }}
+          >
+            {loading ? '⟳' : '🔊'}
+          </button>
+          {hasNote && (
+            <span style={{
+              position: 'absolute',
+              top: '8px',
+              right: '48px',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              color: ORANGE
+            }}>!</span>
+          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span className="telugu-text" style={{ fontSize: '48px', color: BLUE }}>
+              {char}
+            </span>
+            {Array.isArray(vattu) ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginLeft: '4px' }}>
+                <span className="telugu-text" style={{ fontSize: '28px', color: ORANGE, fontFamily: 'Gautami, sans-serif' }}>{vattu[0]}</span>
+                <span className="telugu-text" style={{ fontSize: '28px', color: ORANGE, fontFamily: 'Noto Sans Telugu, sans-serif' }}>{vattu[1]}</span>
+              </div>
+            ) : (
+              <span className="telugu-text" style={{ fontSize: '40px', color: ORANGE, marginLeft: '4px', fontFamily: 'Gautami, sans-serif' }}>
+                {vattu}
+              </span>
+            )}
+          </div>
+          <span style={{ marginTop: '8px', fontSize: '14px', fontStyle: 'italic', color: colors.textSecondary }}>{translit}</span>
+          <span style={{ marginTop: '4px', fontSize: '12px', color: colors.textSecondary }}>{type}</span>
+        </motion.div>
+      );
+    };
+
+    const ConsonantGroup = ({ group, consonants, groupIndex, onNoteClick, colors, darkMode }) => (
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.5 }}
+        style={{ width: '100%', maxWidth: '896px' }}
+      >
+        <h3 style={{ marginBottom: '16px', fontSize: '20px', fontWeight: 600, textTransform: 'capitalize', color: colors.textSecondary }}>{group}</h3>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center' }}>
+          {consonants.map((c, i) => (
+            <ConsonantCard
+              key={c.char}
+              char={c.char}
+              translit={c.translit}
+              type={c.type}
+              index={groupIndex * 5 + i}
+              vattu={c.vattu}
+              hasNote={c.hasNote}
+              noteType={c.noteType}
+              onClick={() => c.hasNote && onNoteClick(c.noteType)}
+              audio={c.audio}
+              colors={colors}
+              darkMode={darkMode}
+            />
+          ))}
+        </div>
+      </motion.div>
+    );
+
+    const ConsonantsLesson = ({ setActive, colors, darkMode, stickyPanel, setStickyPanel }) => {
+      const [notePopup, setNotePopup] = useState(null);
+
+      const handleNoteClick = (noteType) => {
+        setNotePopup(noteType);
+      };
+
+      const closePopup = () => {
+        setNotePopup(null);
+      };
+
+      const noteContent = {
+        ra: {
+          title: "About Ra (ర)",
+          content: "Ra has two vattu forms. The regular vattu (్ర) is used when it is the only vattu in the compound letter. The curled vattu (్ర్) is used when there are other vattus present in the compound letter."
+        },
+        ña: {
+          title: "About Ña (ఞ)",
+          content: "While ña (ఞ) is a valid hallu form, the most common hallu form used in modern Telugu is actually జ్ఞ (jña), which has the same pronunciation. You'll see జ్ఞ much more frequently than standalone ఞ."
+        },
+        shha: {
+          title: "About Ṣha (ష)",
+          content: "Ṣha is the same sound as sha (without the dot), except the tongue is curled back for ṣha and not for sha."
+        },
+        lla: {
+          title: "About Ḷa (ళ)",
+          content: "Ḷa is the same as la (without the dot), except the tongue is curled back for ḷa and not for la"
+        },
+        longr: {
+          title: "About Long R (ౠ)",
+          content: "Just like \"nga\" from the consonant section, this vowel, which is the same as the shorter \"r\" vowel but with the \"r\" sound held for longer, is now practically extinct in modern Telugu, even though schools and keyboards insist on listing it in the alphabet due to them loving to promote outdated things. Unlike \"nga\", however, it didn't go extinct because another letter replaced it in writing, but rather because the sound it represented was such a headache to pronounce that the sound was lost and eventually reduced to the regular, shorter \"r\" vowel (which words that historically used this letter are now spelled with instead)."
+        },
+        nga: {
+          title: "About Nga (ఙ)",
+          content: "While listed on most Telugu alphabet listings, this letter is almost never used in modern Telugu (you'll see why later)."
+        },
+        anusvara: {
+          title: "About ṁ (anusvara)",
+          content: "This is by far the coolest letter in the Telugu alphabet. Since this letter is a pure consonant, the sound it makes cannot be followed by a vowel, since that would require it to have the vowel combining property the non-semivowel consonants do. Due to this, it has to be followed by either another consonant or be the final letter in a word. It can also make three different sounds:\n\n- The sound of \"m\" as in \"mom\" when it is either followed by a consonant in the \"with the lips\" section, the \"miscellaneous\" section, or is the final letter in a word.\n\n- The sound of \"ng\" as in \"sing\" when followed by a consonant in the \"back of the mouth\" section (since the only difference this letter has with the \"nga\" letter already in that row is its inability to be followed by a vowel, and the fact that the \"ng\" sound is never followed by a vowel sound in any Telugu word, this letter has caused that \"ng\" letter to practically go extinct in favor of this much cooler letter).\n\n- The sound of \"n\" as in \"name\" when followed by any other consonant in any other section not already mentioned.\n\nThe fact that this letter is hard to say the name of due to the lack of the vowel combining property that would have allowed it to be pronounced as \"ma\", it has its own special letter name: the anusvara (అనుస్వార)."
+        },
+        visarga: {
+          title: "About ḥ (visarga)",
+          content: "This is the less powerful twin that got bullied by its older sister, the anusvara. Although it, like the anusvara, is a pure consonant that lacks the vowel combining property, it only ever makes one sound, the \"h\" sound in \"happy\", and it can only ever be the final letter in any given word. It is also a much rarer consonant than the anusvara, second only to the practically extinct \"nga\" in terms of rareness across the modern Telugu alphabet. It also has its own unique letter name due to the same lack of the vowel combining property: the visarga (విసర్గ)."
+        }
+      };
+
+      return (
+        <div>
+          <motion.header
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            style={{ marginBottom: '56px', textAlign: 'center' }}
+          >
+            <h1 className="display-text" style={{ fontSize: '48px', fontWeight: 800, lineHeight: 1.1 }}>
+              <span className="telugu-text" style={{ color: BLUE }}>Consonants</span>
+            </h1>
+            <p style={{ textAlign: 'left', maxWidth: '512px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+              Unlike Latin consonants (like "k") which represent a single sound, Telugu consonants in their basic form represent a full syllable consisting of a consonant sound followed by a short "a" sound. In other words, the consonant is always "combined" with a vowel when written and spoken, rather than being a standalone consonant.
+            </p>
+            <p style={{ textAlign: 'left', maxWidth: '512px', margin: '12px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+              To change the vowel sound or add another consonant, the base letter must be modified or "built upon" using the orange extensions in the alphabet (detailed in the next tab).
+            </p>
+            <p style={{ textAlign: 'left', maxWidth: '512px', margin: '12px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+              The alphabet follows a logical phonetic structure rather than an arbitrary order like Latin. It is organized first by consonants, then semivowels, and finally vowels.
+            </p>
+            <p style={{ textAlign: 'left', maxWidth: '512px', margin: '12px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+              The consonants themselves are grouped systematically based on the specific part of the mouth used to articulate and pronounce them.
+            </p>
+            <p style={{ textAlign: 'left', maxWidth: '512px', margin: '12px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+              Certain letters have unique rules and usage notes, which are marked with an exclamation point (!) and can be clicked to view.
+            </p>
+          </motion.header>
+
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '32px', width: '100%' }}>
+            {consonantGroups.map((group, i) => (
+              <ConsonantGroup
+                key={group.group}
+                group={group.group}
+                consonants={group.consonants}
+                groupIndex={i}
+                onNoteClick={handleNoteClick}
+                colors={colors}
+                darkMode={darkMode}
+              />
+            ))}
+          </div>
+
+          <div style={{ marginTop: '96px', marginBottom: '56px', height: '1px', width: '100%', maxWidth: '600px', background: colors.border }} />
+
+          <motion.header
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            style={{ marginBottom: '56px', textAlign: 'center' }}
+          >
+            <h1 className="display-text" style={{ fontSize: '48px', fontWeight: 800, lineHeight: 1.1 }}>
+              <span className="telugu-text" style={{ color: BLUE }}>Semivowels</span>
+            </h1>
+            <p style={{ textAlign: 'left', maxWidth: '512px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary }}>
+              These letters are the most similar to the consonants of the Latin script, since they represent raw consonant sounds and do not combine with vowels (a feature of the other consonants). For this reason, these two letters are ironically not deemed worthy enough of the full consonant (hallu) status of the others, even though they are actually more consonant-like by the Western definition. The "m" letter in particular is the most complex in the language, take a look at their usage notes!
+            </p>
+          </motion.header>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', marginBottom: '64px' }}>
+            {semivowelData.map((s, i) => (
+              <SemivowelCard
+                key={s.char}
+                char={s.char}
+                translit={s.translit}
+                audio={s.audio}
+                index={i}
+                hasNote={s.hasNote}
+                noteType={s.noteType}
+                onNoteClick={handleNoteClick}
+                colors={colors}
+                darkMode={darkMode}
+              />
+            ))}
+          </div>
+
+          <div style={{ marginTop: '96px', marginBottom: '56px', height: '1px', width: '100%', maxWidth: '600px', background: colors.border }} />
+
+          <motion.header
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            style={{ marginBottom: '56px', textAlign: 'center' }}
+          >
+            <h1 className="display-text" style={{ fontSize: '48px', fontWeight: 800, lineHeight: 1.1 }}>
+              <span className="telugu-text" style={{ color: BLUE }}>Vowels</span>
+            </h1>
+            <p style={{ textAlign: 'left', maxWidth: '512px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary }}>
+             Much like the consonants (the normal ones in the first section), these vowels have both a whole form (acchulu అచ్చులు in blue) and a subordinate form (guṇintāpulu గుణింతాపులు, in orange). And yes, "r" can also be a vowel in Telugu. Once you begin exploring writing words in Telugu, you can practice the sound by adding a short vowel, like a quick "u" after the r to make it easier to say, and then slowly fading out the short vowel in favor of just the r. This is such a headache that many casual Telugu speakers just pronounce it as "ru" anyway, even though that is technically the wrong pronunciation. As always, be sure to check the usage notes for more!
+            </p>
+          </motion.header>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', marginBottom: '64px' }}>
+            {vowelData.map((v, i) => (
+              <VowelCard
+                key={v.vowel}
+                vowel={v.vowel}
+                matra={v.matra}
+                translit={v.translit}
+                audio={v.audio}
+                index={i}
+                hasNote={v.hasNote}
+                noteType={v.noteType}
+                onNoteClick={handleNoteClick}
+                colors={colors}
+                darkMode={darkMode}
+              />
+            ))}
+          </div>
+
+          <div style={{ marginTop: '64px', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: '32px', fontSize: '14px', color: colors.textSecondary }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ height: '12px', width: '12px', borderRadius: '50%', backgroundColor: BLUE }} />
+              consonant character
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ height: '12px', width: '12px', borderRadius: '50%', backgroundColor: ORANGE }} />
+              vattu form / deergham
+            </div>
+          </div>
+
+          <div style={{ marginTop: '96px', textAlign: 'center', padding: '32px', borderRadius: '16px', background: darkMode ? 'rgba(180,139,255,0.1)' : 'rgba(180,139,255,0.05)', border: `1px solid ${colors.border}` }}>
+            <p style={{ fontSize: '18px', color: colors.textSecondary, marginBottom: '16px' }}>
+              Put your knowledge to the test! Read the following text:
+            </p>
+            <p className="telugu-text" style={{ fontSize: '32px', color: colors.text, marginBottom: '16px', lineHeight: 1.5 }}>
+              నమః! గగనం, పవనం, జలం సహజం. జననం, మరణం సతతం — జగం చలనం.
+            </p>
+            <p style={{ fontSize: '16px', color: colors.textSecondary, maxWidth: '560px', margin: '0 auto' }}>
+              While reading should be impossible without knowing the vowel combining property of these consonants, the short "a" vowel doesn't change the letter form at all, so this sentence comprised entirely of it is a good first step! Feel free to reference anything above to help you read the text and learn the alphabet! When you think you've got it, press the speaker button to check if you're right!
+            </p>
+            <button
+              onClick={() => setStickyPanel("నమః! గగనం, పవనం, జలం సహజం. జననం, మరణం సతతం — జగం చలనం.")}
+              style={{
+                marginTop: '16px',
+                padding: '10px 20px',
+                borderRadius: '8px',
+                border: `1px solid ${colors.border}`,
+                background: colors.cardBg,
+                color: colors.text,
+                cursor: 'pointer',
+                fontSize: '14px',
+                transition: 'all 0.3s'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = colors.cardBg;
+              }}
+            >
+              Keep phrase visible while scrolling up
+            </button>
+          </div>
+
+          <div style={{ marginTop: '32px', textAlign: 'center', padding: '32px', borderRadius: '16px', background: darkMode ? 'rgba(76,141,255,0.1)' : 'rgba(76,141,255,0.05)', border: `1px solid ${colors.border}` }}>
+            <p style={{ fontSize: '18px', color: colors.textSecondary, marginBottom: '12px' }}>
+              Ready to learn how to build words with these letters?
+            </p>
+            <p style={{ fontSize: '16px', color: colors.textSecondary }}>
+              Explore the <span onClick={() => { setActive('letters'); window.scrollTo(0, 0); }} style={{ color: BLUE, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Building letters</span> tab next to see how consonants and vowels combine!
+            </p>
+          </div>
+
+          {notePopup && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={closePopup}
+              style={{
+                position: 'fixed',
+                inset: 0,
+                background: colors.overlayBg,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 100
+              }}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  background: colors.popupBg,
+                  borderRadius: '16px',
+                  border: `1px solid ${colors.border}`,
+                  padding: '32px',
+                  maxWidth: '480px',
+                  width: '90%'
+                }}
+              >
+                <h2 style={{ fontSize: '24px', fontWeight: 700, marginBottom: '16px', color: colors.text }}>
+                  {noteContent[notePopup].title}
+                </h2>
+                <div style={{ fontSize: '16px', lineHeight: 1.6, color: colors.textSecondary, whiteSpace: 'pre-line' }}>
+                  {noteContent[notePopup].content}
+                </div>
+                <button
+                  onClick={closePopup}
+                  style={{
+                    marginTop: '24px',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    background: BLUE,
+                    color: 'white',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Close
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </div>
+      );
+    };
+
+    /* ---------------------- Page 4: reading practice ---------------------- */
+
+    const readingTexts = [
+      {
+        id: "reading-1",
+        level: "Easy",
+        telugu: "నేను పాఠశాలకి వెళ్తాను. అక్కడ నా స్నేహితులు ఉంటారు. మనం కలిసి ఆడుకుంటాం. నాకు పాఠశాల ఇష్టం.",
+        translit: "Nēnu pāthaśālaki velutānu. Akkaḍa nā snēhitulu untāru. Manam kalisi aḍukuṭāṁ. Nāku pāthaśāla iṣṭaṁ.",
+        english: "I go to school. My friends are there. We play together. I like school.",
+        description: "Simple sentences with basic vocabulary about daily life."
+      },
+      {
+        id: "reading-2",
+        level: "Medium",
+        telugu: "నేను ఉదయం లేస్తాను. తర్వాత కాఫీ తాగుతాను. అమ్మ వంట చేస్తుంది. నాన్న ఆఫీసుకి వెళ్తాడు. మనం సాయంత్రం కలిసి భోజనం చేస్తాం. అది చాలా బాగుంటుంది.",
+        translit: "Nēnu udayaṁ lēstānu. Tarvāta kāphī tāgutānu. Amma vaṇṭa chestundi. Nānna ēphīsuki veluṭāḍu. Manam sāyaṁtraṁ kalisi bhōjanaṁ chestām. Adi chālā baguṇṭundi.",
+        english: "I wake up in the morning. Then I drink coffee. Mom cooks. Dad goes to the office. We have dinner together in the evening. It's very good.",
+        description: "More complex sentences with family and routine vocabulary."
+      },
+      {
+        id: "reading-3",
+        level: "Hard",
+        telugu: "మన ఊరిలో పెద్ద చెరువు ఉంది. అక్కడ చాలా మంది చేపలు పడుతుంటారు. వర్షాకాలంలో నీళ్ళు చాలా పెరుగుతాయి. ప్రతి ఏటా ఉత్సవాలు జరుగుతాయి. పిల్లలు ఎంతో ఆనందంగా ఆడుకుంటారు. మన ఊరు చాలా అందంగా ఉంటుంది.",
+        translit: "Mana ūrilō pedda ceruvu undi. Akkaḍa chāla mandi cēpaḷ paḍutāṭāru. Varṣhākālaṁlō nīḷḷu chāla perugutāyi. Prati yēṭā utsavālu jarugutāyi. Pillālu entō ānandaṁgā aḍukuṭāru. Mana ūru chālā aṁdaṁgā uṇṭundi.",
+        english: "There is a big lake in our village. Many people fish there. The water rises a lot during the rainy season. Festivals happen every year. Children play with great joy. Our village is very beautiful.",
+        description: "Longer text with more descriptive language and cultural elements."
+      }
+    ];
+
+    const ReadingBlock = ({ text, index, colors, darkMode, onShowInPanel }) => {
+      const [expanded, setExpanded] = useState(false);
+
+      return (
+        <motion.div
+          data-testid={`reading-${index + 1}`}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.5, delay: index * 0.1 }}
+          style={{
+            width: '100%',
+            maxWidth: '768px',
+            borderRadius: '20px',
+            border: `1px solid ${colors.border}`,
+            background: colors.cardBg,
+            padding: '32px 40px',
+            backdropFilter: 'blur(8px)'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+            <span style={{ 
+              fontSize: '14px', 
+              fontWeight: 600, 
+              letterSpacing: '0.1em',
+              color: colors.textSecondary,
+              textTransform: 'uppercase'
+            }}>
+              Level {index + 1}: {text.level}
+            </span>
+            <span style={{ 
+              fontSize: '12px', 
+              color: colors.textSecondary,
+              opacity: 0.7
+            }}>
+              {text.telugu.length} characters
+            </span>
+          </div>
+
+          <p className="telugu-text" style={{ 
+            fontSize: '28px', 
+            color: colors.text, 
+            lineHeight: 1.6,
+            marginBottom: '16px'
+          }}>
+            {text.telugu}
+          </p>
+
+          <div style={{ 
+            height: '1px', 
+            width: '100%', 
+            background: colors.border, 
+            margin: '20px 0' 
+          }} />
+
+          <p style={{ 
+            fontSize: '16px', 
+            fontStyle: 'italic', 
+            color: colors.textSecondary, 
+            marginBottom: '12px' 
+          }}>
+            {text.translit}
+          </p>
+
+          <p style={{ 
+            fontSize: '16px', 
+            color: colors.textSecondary, 
+            marginBottom: '20px',
+            lineHeight: 1.5
+          }}>
+            {text.english}
+          </p>
+
+          <p style={{ 
+            fontSize: '14px', 
+            color: colors.textSecondary, 
+            marginBottom: '16px',
+            fontStyle: 'italic'
+          }}>
+            {text.description}
+          </p>
+
+          <button
+            onClick={() => onShowInPanel(text.telugu)}
+            style={{
+              padding: '12px 24px',
+              borderRadius: '8px',
+              border: `1px solid ${colors.border}`,
+              background: colors.cardBg,
+              color: colors.text,
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 500,
+              transition: 'all 0.3s',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+            onMouseOver={(e) => {
+              e.target.style.background = darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+              e.target.style.borderColor = BLUE;
+            }}
+            onMouseOut={(e) => {
+              e.target.style.background = colors.cardBg;
+              e.target.style.borderColor = colors.border;
+            }}
+          >
+            <span>📖</span>
+            Keep visible while switching tabs
+          </button>
+        </motion.div>
+      );
+    };
+
+    const ReadingPractice = ({ colors, darkMode, stickyPanel, setStickyPanel }) => {
+
+      return (
+        <div>
+          <motion.header
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            style={{ marginBottom: '56px', textAlign: 'center' }}
+          >
+            <h1 className="display-text" style={{ fontSize: '48px', fontWeight: 800, lineHeight: 1.1, color: colors.text }}>
+              Reading Practice
+            </h1>
+            <h2 className="display-text" style={{ fontSize: '24px', fontWeight: 600, marginTop: '8px', color: colors.textSecondary }}>
+              చదవడం ప్రాక్టీస్
+            </h2>
+            <p style={{ textAlign: 'left', maxWidth: '512px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+              Practice reading Telugu with texts of increasing difficulty. Start with the easy level and work your way up. Each text includes transliteration and English translation to help you understand. Use the button below each text to keep it visible in a side panel while you scroll.
+            </p>
+          </motion.header>
+
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '32px', width: '100%' }}>
+            {readingTexts.map((text, i) => (
+              <ReadingBlock
+                key={text.id}
+                text={text}
+                index={i}
+                colors={colors}
+                darkMode={darkMode}
+                onShowInPanel={setStickyPanel}
+              />
+            ))}
+          </div>
+        </div>
+      );
+    };
+
+    /* ---------------------------- Page 0: intro/home ---------------------------- */
+
+    const introCards = [
+      {
+        id: "consonants",
+        number: "01",
+        titleTelugu: "అక్షరమాల",
+        title: "Alphabet",
+        description: "Meet the consonants, semivowels, and vowels of the Telugu script — how they're grouped by sound, and the vattu forms used to build consonant clusters.",
+      },
+      {
+        id: "letters",
+        number: "02",
+        titleTelugu: "అక్షరాలు",
+        title: "Building letters",
+        description: "Learn how a consonant and a vowel combine into a single written letter, including the irregular combinations that don't follow the standard pattern.",
+      },
+      {
+        id: "reading",
+        number: "03",
+        titleTelugu: "చదవడం",
+        title: "Reading practice",
+        description: "Practice reading Telugu with three texts of increasing difficulty — from simple daily sentences to descriptive passages about village life.",
+      },
+      {
+        id: "ko",
+        number: "04",
+        titleTelugu: "కో",
+        title: "The కో particle",
+        description: "A worked example of Telugu grammar in action: see how attaching కో to a verb changes its meaning to something done for oneself.",
+      },
+    ];
+
+    const IntroCard = ({ card, onOpen, colors, darkMode }) => (
+      <motion.div
+        data-testid={`intro-card-${card.id}`}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.5 }}
+        onClick={onOpen}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '24px',
+          width: '100%',
+          maxWidth: '640px',
+          borderRadius: '20px',
+          border: `1px solid ${colors.border}`,
+          background: colors.cardBg,
+          padding: '28px 32px',
+          backdropFilter: 'blur(8px)',
+          cursor: 'pointer',
+          transition: 'all 0.3s'
+        }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.borderColor = 'rgba(76,141,255,0.5)';
+          e.currentTarget.style.background = darkMode ? 'rgba(76,141,255,0.08)' : 'rgba(76,141,255,0.05)';
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.borderColor = colors.border;
+          e.currentTarget.style.background = colors.cardBg;
+        }}
+      >
+        <span
+          className="display-text"
+          style={{ fontSize: '14px', fontWeight: 600, letterSpacing: '0.2em', color: colors.textSecondary, flexShrink: 0 }}
+        >
+          {card.number}
+        </span>
+
+        <span className="telugu-text" style={{ fontSize: '40px', color: BLUE, flexShrink: 0, minWidth: '90px' }}>
+          {card.titleTelugu}
+        </span>
+
+        <div style={{ flex: 1, textAlign: 'left' }}>
+          <h3 className="display-text" style={{ fontSize: '20px', fontWeight: 700, color: colors.text, marginBottom: '4px' }}>
+            {card.title}
+          </h3>
+          <p style={{ fontSize: '14px', color: colors.textSecondary, lineHeight: 1.5, textAlign: 'left' }}>
+            {card.description}
+          </p>
+        </div>
+
+        <span
+          className="display-text"
+          style={{ fontSize: '20px', color: BLUE, flexShrink: 0 }}
+        >
+          →
+        </span>
+      </motion.div>
+    );
+
+    const IntroLesson = ({ setActive, colors, darkMode }) => (
+      <div>
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          style={{ marginBottom: '48px', textAlign: 'center' }}
+        >
+          <h1 className="display-text" style={{ fontSize: '48px', fontWeight: 800, lineHeight: 1.1, color: colors.text }}>
+            <span className="telugu-text" style={{ color: ORANGE }}>స్వాగతం</span> — Welcome
+          </h1>
+          <h2 className="display-text" style={{ fontSize: '24px', fontWeight: 600, marginTop: '8px', color: colors.textSecondary }}>
+            Learn Telugu script in a jiffy
+          </h2>
+          <p style={{ textAlign: 'left', maxWidth: '560px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+            This site is a short, self-contained introduction to reading and understanding written Telugu (తెలుగు). It's built as a series of pages, each one building on the last, so the alphabet you learn first becomes the foundation for building letters, and building letters becomes the foundation for reading real grammar. Tap any speaker icon (🔊) to hear a sound spoken aloud, and click any "!" marker to see a usage note. Use the tabs at the top — or the cards below — to move between pages, and the sun/moon button to switch between light and dark mode.
+          </p>
+        </motion.header>
+
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', width: '100%' }}>
+          {introCards.map((card) => (
+            <IntroCard
+              key={card.id}
+              card={card}
+              colors={colors}
+              darkMode={darkMode}
+              onOpen={() => { setActive(card.id); window.scrollTo(0, 0); }}
+            />
+          ))}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          style={{ marginTop: '80px', textAlign: 'center', padding: '32px', borderRadius: '16px', background: darkMode ? 'rgba(180,139,255,0.1)' : 'rgba(180,139,255,0.05)', border: `1px solid ${colors.border}` }}
+        >
+          <p style={{ textAlign: 'left', fontSize: '16px', color: colors.textSecondary, maxWidth: '560px', margin: '0 auto', lineHeight: 1.6 }}>
+            New here? Start with <span onClick={() => { setActive('consonants'); window.scrollTo(0, 0); }} style={{ color: BLUE, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Alphabet</span> to learn the letters, then move on to <span onClick={() => { setActive('letters'); window.scrollTo(0, 0); }} style={{ color: BLUE, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Building letters</span> and <span onClick={() => { setActive('ko'); window.scrollTo(0, 0); }} style={{ color: BLUE, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>The కో particle</span> to see it all put to use, then practice with <span onClick={() => { setActive('reading'); window.scrollTo(0, 0); }} style={{ color: BLUE, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Reading practice</span>.
+          </p>
+        </motion.div>
+      </div>
+    );
+
+    /* --------------------------------- Shell --------------------------------- */
+
+    const TABS = [
+      { id: "intro", label: "Home" },
+      { id: "consonants", label: "Alphabet" },
+      { id: "letters", label: "Building letters" },
+      { id: "reading", label: "Reading practice" },
+      { id: "ko", label: "The కో particle" },
+    ];
+
+    function App() {
+      const [active, setActive] = useState("intro");
+      const [darkMode, setDarkMode] = useState(true);
+      const [stickyPanel, setStickyPanel] = useState(null);
+
+      const colors = darkMode ? {
+        bg: DARK_BG,
+        text: DARK_TEXT,
+        textSecondary: DARK_TEXT_SECONDARY,
+        border: DARK_BORDER,
+        cardBg: 'rgba(255,255,255,0.03)',
+        popupBg: '#1a1a1e',
+        overlayBg: 'rgba(0,0,0,0.7)',
+        tabBg: 'rgba(0,0,0,0.4)',
+        glow1: 'rgba(76,141,255,0.2)',
+        glow2: 'rgba(255,138,61,0.15)',
+        glow3: 'rgba(180,139,255,0.1)'
+      } : {
+        bg: LIGHT_BG,
+        text: LIGHT_TEXT,
+        textSecondary: LIGHT_TEXT_SECONDARY,
+        border: LIGHT_BORDER,
+        cardBg: 'rgba(0,0,0,0.03)',
+        popupBg: '#f5f5f5',
+        overlayBg: 'rgba(0,0,0,0.5)',
+        tabBg: 'rgba(0,0,0,0.05)',
+        glow1: 'rgba(76,141,255,0.1)',
+        glow2: 'rgba(255,138,61,0.08)',
+        glow3: 'rgba(180,139,255,0.05)'
+      };
+
+      React.useEffect(() => {
+        document.body.style.background = colors.bg;
+        document.body.style.color = colors.text;
+        const rootEl = document.getElementById('root');
+        if (rootEl) {
+          rootEl.style.background = colors.bg;
+          rootEl.style.color = colors.text;
+        }
+      }, [darkMode]);
+
+      return (
+        <div style={{ position: 'relative', minHeight: '100vh', overflow: 'hidden', background: colors.bg, color: colors.text }}>
+          <div style={{ position: 'fixed', top: '-160px', left: '-160px', height: '384px', width: '384px', borderRadius: '50%', background: colors.glow1, filter: 'blur(120px)', pointerEvents: 'none' }} />
+          <div style={{ position: 'fixed', bottom: '-160px', right: '-160px', height: '384px', width: '384px', borderRadius: '50%', background: colors.glow2, filter: 'blur(120px)', pointerEvents: 'none' }} />
+          <div style={{ position: 'fixed', top: '33.33%', right: '25%', height: '288px', width: '288px', borderRadius: '50%', background: colors.glow3, filter: 'blur(120px)', pointerEvents: 'none' }} />
+
+          {/* Tab bar */}
+          <div style={{ position: 'sticky', top: 0, zIndex: 30, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '32px 24px 24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', borderRadius: '9999px', border: `1px solid ${colors.border}`, background: colors.tabBg, padding: '6px', backdropFilter: 'blur(24px)' }}>
+              {TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  data-testid={`tab-${tab.id}`}
+                  onClick={() => setActive(tab.id)}
+                  style={{
+                    position: 'relative',
+                    borderRadius: '9999px',
+                    padding: '10px 20px',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    border: 'none',
+                    background: 'transparent',
+                    color: active === tab.id ? (darkMode ? 'white' : '#1a1a1a') : (darkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)'),
+                    cursor: 'pointer',
+                    transition: 'color 0.2s'
+                  }}
+                  onMouseOver={(e) => {
+                    if (active !== tab.id) {
+                      e.target.style.color = darkMode ? 'white' : '#1a1a1a';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (active !== tab.id) {
+                      e.target.style.color = darkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.6)';
+                    }
+                  }}
+                >
+                  {active === tab.id && (
+                    <motion.span
+                      layoutId="tab-pill"
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        borderRadius: '9999px',
+                        background: BLUE
+                      }}
+                      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                    />
+                  )}
+                  <span style={{ position: 'relative', zIndex: 10 }}>
+                    {tab.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* Dark mode toggle */}
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              style={{
+                padding: '10px 16px',
+                borderRadius: '9999px',
+                border: `1px solid ${colors.border}`,
+                background: colors.tabBg,
+                color: colors.text,
+                fontSize: '14px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                backdropFilter: 'blur(24px)'
+              }}
+            >
+              {darkMode ? '☀️' : '🌙'}
+            </button>
+          </div>
+
+          <main style={{ position: 'relative', zIndex: 10, margin: '0 auto', display: 'flex', maxWidth: '896px', flexDirection: 'column', alignItems: 'flex-start', padding: '24px 96px 96px 24px' }}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active}
+                data-testid={`page-${active}`}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.3 }}
+                style={{ width: '100%' }}
+              >
+                {active === "ko" ? <KoLesson colors={colors} darkMode={darkMode} /> : active === "letters" ? <LettersLesson colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} /> : active === "reading" ? <ReadingPractice colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} /> : active === "intro" ? <IntroLesson setActive={setActive} colors={colors} darkMode={darkMode} /> : <ConsonantsLesson setActive={setActive} colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} />}
+              </motion.div>
+            </AnimatePresence>
+          </main>
+
+          {stickyPanel && (
+            <motion.div
+              initial={{ opacity: 0, x: 300 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 300 }}
+              style={{
+                position: 'fixed',
+                right: '20px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                width: '320px',
+                padding: '24px',
+                borderRadius: '16px',
+                background: darkMode ? 'rgba(10,10,12,0.95)' : 'rgba(255,255,255,0.95)',
+                border: `1px solid ${colors.border}`,
+                backdropFilter: 'blur(16px)',
+                zIndex: 1000,
+                boxShadow: darkMode ? '0 8px 32px rgba(0,0,0,0.4)' : '0 8px 32px rgba(0,0,0,0.1)'
+              }}
+            >
+              <button
+                onClick={() => setStickyPanel(null)}
+                style={{
+                  position: 'absolute',
+                  top: '12px',
+                  right: '12px',
+                  background: 'none',
+                  border: 'none',
+                  color: colors.textSecondary,
+                  fontSize: '20px',
+                  cursor: 'pointer',
+                  padding: '4px'
+                }}
+              >
+                ×
+              </button>
+              <p style={{ fontSize: '14px', color: colors.textSecondary, marginBottom: '12px' }}>
+                Test phrase:
+              </p>
+              <p className="telugu-text" style={{ fontSize: '24px', color: colors.text, lineHeight: 1.6 }}>
+                {stickyPanel}
+              </p>
+            </motion.div>
+          )}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    
+    try {
+      root.render(<App />);
+    } catch (error) {
+      console.error('Error rendering app:', error);
+      document.getElementById('root').innerHTML = `
+        <div style="color: white; padding: 20px;">
+          <h1>Error loading app</h1>
+          <pre style="color: #ff6b6b;">${error.message}</pre>
+          <pre style="color: #888;">${error.stack}</pre>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
