@@ -30,10 +30,11 @@ export default async function handler(req, res) {
 }
 
 Rules:
-- For multiple-choice: telugu is null, romanization is the question
-- For reading: telugu is the text, options is null
+- For multiple-choice exercises: telugu is null, romanization is the romanized word/phrase, options are 4 Telugu script options, correctAnswer is the index of the correct Telugu script. The instruction should say "Select the correct Telugu script" or similar. DO NOT ask for English translation.
+- For reading exercises: telugu is the Telugu text to read, options is null, romanization is the romanization. The instruction should be about reading/pronouncing the text, not about meaning/translation.
+- NEVER ask users to find "meaning" or "translation" - this is a script learning tool, not a vocabulary tool
 - Match difficulty to user's level
-- Focus on topics user requests
+- Focus on topics user requests (alphabet, vowels, consonants, reading practice, etc.)
 - Return ONLY valid JSON, no other text
 - If user asks questions instead of practice, respond with conversational text (not JSON)`
           },
