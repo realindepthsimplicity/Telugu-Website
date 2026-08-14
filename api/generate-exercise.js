@@ -1,0 +1,70 @@
+export default async function handler(req, res) {
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const { userMessage, conversationHistory } = req.body;
+
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content: `You are a Telugu language learning assistant. Generate interactive multiple-choice or reading exercises in this exact JSON format:
+
+{
+  "type": "multiple-choice" or "reading",
+  "telugu": "Telugu text (for reading) or null",
+  "romanization": "Romanized form",
+  "options": ["option1", "option2", "option3", "option4"],
+  "correctAnswer": 0-3,
+  "instruction": "Clear instruction for the learner"
+}
+
+Rules:
+- For multiple-choice: telugu is null, romanization is the question
+- For reading: telugu is the text, options is null
+- Match difficulty to user's level
+- Focus on topics user requests
+- Return ONLY valid JSON, no other text
+- If user asks questions instead of practice, respond with conversational text (not JSON)`
+          },
+          ...conversationHistory,
+          {
+            role: 'user',
+            content: userMessage
+          }
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.7
+      })
+    });
+
+    const data = await response.json();
+    
+    if (data.error) {
+      return res.status(500).json({ error: data.error.message });
+    }
+
+    const content = data.choices[0].message.content;
+    
+    // Try to parse as JSON (exercise) or return as text (conversation)
+    try {
+      const exercise = JSON.parse(content);
+      return res.json({ type: 'exercise', content: exercise });
+    } catch {
+      return res.json({ type: 'conversation', content: content });
+    }
+
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}

@@ -808,302 +808,6 @@
         }
       ];
 
-      const ExerciseBox = ({ exercises, title, colors, darkMode, stickyPanel, setStickyPanel }) => {
-        const [currentExercise, setCurrentExercise] = useState(0);
-        const [showAnswer, setShowAnswer] = useState(false);
-        const [selectedOption, setSelectedOption] = useState(null);
-        const [showRomanization, setShowRomanization] = useState(false);
-
-        const handleNext = () => {
-          setCurrentExercise((prev) => (prev + 1) % exercises.length);
-          setShowAnswer(false);
-          setSelectedOption(null);
-          setShowRomanization(false);
-        };
-
-        const handlePrevious = () => {
-          setCurrentExercise((prev) => (prev - 1 + exercises.length) % exercises.length);
-          setShowAnswer(false);
-          setSelectedOption(null);
-          setShowRomanization(false);
-        };
-
-        const ExerciseContent = ({ exercise }) => {
-          if (exercise.type === "reading") {
-            return (
-              <>
-                <p className="telugu-text" style={{ fontSize: '32px', color: colors.text, marginBottom: '16px', lineHeight: 1.5 }}>
-                  {exercise.telugu}
-                </p>
-                {showRomanization && (
-                  <p style={{ fontSize: '14px', color: colors.textSecondary, marginBottom: '12px', fontStyle: 'italic' }}>
-                    Romanization: {exercise.romanization}
-                  </p>
-                )}
-                <p style={{ fontSize: '16px', color: colors.textSecondary, maxWidth: '560px', margin: '0 auto' }}>
-                  {exercise.instruction}
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', marginTop: '16px' }}>
-                {setStickyPanel && (
-                  <button
-                    onClick={() => setStickyPanel(exercise.telugu)}
-                    style={{
-                      padding: '10px 20px',
-                      borderRadius: '8px',
-                      border: `1px solid ${colors.border}`,
-                      background: colors.cardBg,
-                      color: colors.text,
-                      cursor: 'pointer',
-                      fontSize: '14px',
-                      transition: 'all 0.3s'
-                    }}
-                    onMouseOver={(e) => {
-                      e.target.style.background = darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)';
-                    }}
-                    onMouseOut={(e) => {
-                      e.target.style.background = colors.cardBg;
-                    }}
-                  >
-                    Keep phrase visible while scrolling up / switching tabs
-                  </button>
-                )}
-                <button
-                  onClick={() => setShowRomanization(!showRomanization)}
-                  style={{
-                    padding: '10px 20px',
-                    borderRadius: '8px',
-                    border: `1px solid ${colors.border}`,
-                    background: showRomanization ? 'rgba(76, 141, 255, 0.2)' : colors.cardBg,
-                    color: colors.text,
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    transition: 'all 0.3s'
-                  }}
-                  onMouseOver={(e) => {
-                    e.target.style.background = darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.target.style.background = showRomanization ? 'rgba(76, 141, 255, 0.2)' : colors.cardBg;
-                  }}
-                >
-                  {showRomanization ? "Hide Romanization" : "Show Romanization"}
-                </button>
-              </div>
-              </>
-            );
-          }
-
-          if (exercise.type === "fill-blank") {
-            return (
-              <>
-                <p className="telugu-text" style={{ fontSize: '32px', color: colors.text, marginBottom: '16px', lineHeight: 1.5 }}>
-                  {exercise.telugu.replace("____", showAnswer ? exercise.answer : "____")}
-                </p>
-                <p style={{ fontSize: '14px', color: colors.textSecondary, marginBottom: '12px', fontStyle: 'italic' }}>
-                  Romanization: {exercise.romanization}
-                </p>
-                <p style={{ fontSize: '16px', color: colors.textSecondary, maxWidth: '560px', margin: '0 auto' }}>
-                  {exercise.instruction}
-                </p>
-                <button
-                  onClick={() => setShowAnswer(!showAnswer)}
-                  style={{
-                    marginTop: '16px',
-                    padding: '10px 20px',
-                    borderRadius: '8px',
-                    border: `1px solid ${colors.border}`,
-                    background: showAnswer ? 'rgba(76, 141, 255, 0.2)' : colors.cardBg,
-                    color: colors.text,
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    transition: 'all 0.3s'
-                  }}
-                >
-                  {showAnswer ? "Hide Answer" : "Show Answer"}
-                </button>
-              </>
-            );
-          }
-
-          if (exercise.type === "multiple-choice") {
-            return (
-              <>
-                {exercise.telugu ? (
-                  <>
-                    <p className="telugu-text" style={{ fontSize: '32px', color: colors.text, marginBottom: '16px', lineHeight: 1.5 }}>
-                      {exercise.telugu}
-                    </p>
-                    <p style={{ fontSize: '14px', color: colors.textSecondary, marginBottom: '12px', fontStyle: 'italic' }}>
-                      Romanization: {exercise.romanization}
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p style={{ fontSize: '24px', color: colors.text, marginBottom: '16px', lineHeight: 1.5, fontWeight: 600 }}>
-                      {exercise.romanization}
-                    </p>
-                    <p style={{ fontSize: '14px', color: colors.textSecondary, marginBottom: '12px', fontStyle: 'italic' }}>
-                      Select the correct Telugu script
-                    </p>
-                  </>
-                )}
-                <p style={{ fontSize: '16px', color: colors.textSecondary, maxWidth: '560px', margin: '0 auto 16px' }}>
-                  {exercise.instruction}
-                </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: '400px', margin: '0 auto' }}>
-                  {exercise.options.map((option, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setSelectedOption(index)}
-                      style={{
-                        padding: '12px 16px',
-                        borderRadius: '8px',
-                        border: `1px solid ${colors.border}`,
-                        background: selectedOption === index 
-                          ? (showAnswer 
-                            ? (index === exercise.correctAnswer ? 'rgba(74, 222, 128, 0.3)' : 'rgba(251, 113, 133, 0.3)')
-                            : 'rgba(76, 141, 255, 0.2)')
-                          : colors.cardBg,
-                        color: colors.text,
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                        textAlign: 'left',
-                        transition: 'all 0.3s'
-                      }}
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', marginTop: '16px' }}>
-                  {setStickyPanel && (
-                    <button
-                      onClick={() => setStickyPanel(exercise.options.join(' | '))}
-                      style={{
-                        padding: '10px 20px',
-                        borderRadius: '8px',
-                        border: `1px solid ${colors.border}`,
-                        background: colors.cardBg,
-                        color: colors.text,
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                        transition: 'all 0.3s'
-                      }}
-                      onMouseOver={(e) => {
-                        e.target.style.background = darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)';
-                      }}
-                      onMouseOut={(e) => {
-                        e.target.style.background = colors.cardBg;
-                      }}
-                    >
-                      Keep choices visible while scrolling up / switching tabs
-                    </button>
-                  )}
-                  <button
-                    onClick={() => setShowAnswer(!showAnswer)}
-                    disabled={selectedOption === null}
-                    style={{
-                      padding: '10px 20px',
-                      borderRadius: '8px',
-                      border: `1px solid ${colors.border}`,
-                      background: selectedOption === null ? colors.cardBg : 'rgba(76, 141, 255, 0.2)',
-                      color: colors.text,
-                      cursor: selectedOption === null ? 'not-allowed' : 'pointer',
-                      fontSize: '14px',
-                      transition: 'all 0.3s'
-                    }}
-                  >
-                    {showAnswer ? "Hide Answer" : "Check Answer"}
-                  </button>
-                </div>
-              </>
-            );
-          }
-
-          return null;
-        };
-
-        return (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            style={{ marginTop: '96px', textAlign: 'center', padding: '32px', borderRadius: '16px', background: darkMode ? 'rgba(180,139,255,0.1)' : 'rgba(180,139,255,0.05)', border: `1px solid ${colors.border}` }}
-          >
-            <p style={{ fontSize: '18px', color: colors.textSecondary, marginBottom: '16px' }}>
-              {title}
-            </p>
-            <ExerciseContent exercise={exercises[currentExercise]} />
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginTop: '24px' }}>
-              <button
-                onClick={handlePrevious}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '8px',
-                  border: `1px solid ${colors.border}`,
-                  background: colors.cardBg,
-                  color: colors.text,
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  transition: 'all 0.3s'
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.background = darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)';
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.background = colors.cardBg;
-                }}
-              >
-                ← Previous
-              </button>
-              <div style={{ display: 'flex', gap: '6px' }}>
-                {exercises.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      setCurrentExercise(index);
-                      setShowAnswer(false);
-                      setSelectedOption(null);
-                    }}
-                    style={{
-                      width: '8px',
-                      height: '8px',
-                      borderRadius: '50%',
-                      border: 'none',
-                      background: index === currentExercise ? BLUE : colors.textSecondary,
-                      cursor: 'pointer',
-                      transition: 'all 0.3s'
-                    }}
-                  />
-                ))}
-              </div>
-              <button
-                onClick={handleNext}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '8px',
-                  border: `1px solid ${colors.border}`,
-                  background: colors.cardBg,
-                  color: colors.text,
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  transition: 'all 0.3s'
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.background = darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)';
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.background = colors.cardBg;
-                }}
-              >
-                Next →
-              </button>
-            </div>
-          </motion.div>
-        );
-      };
-
       return (
       <div>
         <motion.header
@@ -1151,6 +855,8 @@
             every vowel &amp; its combining form
           </div>
         </div>
+
+        <ExerciseBox exercises={vowelExercises} title="Can you decipher it?" colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} />
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -2513,6 +2219,134 @@
       </div>
     );
 
+    const ChatBot = ({ colors, darkMode }) => {
+      const [messages, setMessages] = useState([]);
+      const [input, setInput] = useState('');
+      const [currentExercise, setCurrentExercise] = useState(null);
+      const [isLoading, setIsLoading] = useState(false);
+
+      const sendMessage = async () => {
+        if (!input.trim()) return;
+        
+        const userMessage = input;
+        setInput('');
+        setIsLoading(true);
+
+        setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+
+        try {
+          const response = await fetch('/api/generate-exercise', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userMessage,
+              conversationHistory: messages.map(m => ({ role: m.role, content: m.content }))
+            })
+          });
+
+          const data = await response.json();
+
+          if (data.type === 'exercise') {
+            setCurrentExercise(data.content);
+            setMessages(prev => [...prev, { 
+              role: 'assistant', 
+              content: "Here's a practice exercise for you:" 
+            }]);
+          } else {
+            setMessages(prev => [...prev, { 
+              role: 'assistant', 
+              content: data.content 
+            }]);
+          }
+        } catch (error) {
+          setMessages(prev => [...prev, { 
+            role: 'assistant', 
+            content: "Sorry, something went wrong. Please try again." 
+          }]);
+        }
+
+        setIsLoading(false);
+      };
+
+      return (
+        <div style={{ padding: '32px', maxWidth: '800px', margin: '0 auto' }}>
+          <h2 style={{ fontSize: '32px', color: colors.text, marginBottom: '24px' }}>
+            AI Practice Assistant
+          </h2>
+
+          <div style={{ 
+            minHeight: '200px', 
+            maxHeight: '400px', 
+            overflowY: 'auto', 
+            marginBottom: '24px',
+            padding: '16px',
+            borderRadius: '12px',
+            background: colors.cardBg,
+            border: `1px solid ${colors.border}`
+          }}>
+            {messages.map((msg, i) => (
+              <div key={i} style={{ 
+                marginBottom: '12px',
+                padding: '8px 12px',
+                borderRadius: '8px',
+                background: msg.role === 'user' ? 'rgba(76,141,255,0.1)' : 'rgba(255,255,255,0.05)',
+                color: colors.text
+              }}>
+                <strong>{msg.role === 'user' ? 'You: ' : 'AI: ']</strong>
+                {msg.content}
+              </div>
+            ))}
+            {isLoading && <div style={{ color: colors.textSecondary }}>Thinking...</div>}
+          </div>
+
+          {currentExercise && (
+            <ExerciseBox 
+              exercises={[currentExercise]} 
+              title="AI Generated Practice"
+              colors={colors}
+              darkMode={darkMode}
+              stickyPanel={null}
+              setStickyPanel={null}
+            />
+          )}
+
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+              placeholder="Ask for practice or ask a question..."
+              style={{
+                flex: 1,
+                padding: '12px 16px',
+                borderRadius: '8px',
+                border: `1px solid ${colors.border}`,
+                background: colors.cardBg,
+                color: colors.text,
+                fontSize: '16px'
+              }}
+            />
+            <button
+              onClick={sendMessage}
+              disabled={isLoading}
+              style={{
+                padding: '12px 24px',
+                borderRadius: '8px',
+                border: 'none',
+                background: 'rgba(76,141,255,0.2)',
+                color: colors.text,
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                fontSize: '16px'
+              }}
+            >
+              Send
+            </button>
+          </div>
+        </div>
+      );
+    };
+
     /* --------------------------------- Shell --------------------------------- */
 
     const TABS = [
@@ -2521,6 +2355,7 @@
       { id: "letters", label: "Building letters" },
       { id: "reading", label: "Reading practice" },
       { id: "ko", label: "The కో particle" },
+      { id: "chatbot", label: "AI Practice" },
     ];
 
     function App() {
@@ -2680,7 +2515,7 @@
                 transition={{ duration: 0.3 }}
                 style={{ width: '100%' }}
               >
-                {active === "ko" ? <KoLesson colors={colors} darkMode={darkMode} /> : active === "letters" ? <LettersLesson colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} /> : active === "reading" ? <ReadingPractice colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} /> : active === "intro" ? <IntroLesson setActive={setActive} colors={colors} darkMode={darkMode} /> : <ConsonantsLesson setActive={setActive} colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} />}
+                {active === "ko" ? <KoLesson colors={colors} darkMode={darkMode} /> : active === "letters" ? <LettersLesson colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} /> : active === "reading" ? <ReadingPractice colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} /> : active === "intro" ? <IntroLesson setActive={setActive} colors={colors} darkMode={darkMode} /> : active === "chatbot" ? <ChatBot colors={colors} darkMode={darkMode} /> : <ConsonantsLesson setActive={setActive} colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} />}
               </motion.div>
             </AnimatePresence>
             </div>
