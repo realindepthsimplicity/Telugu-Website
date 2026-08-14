@@ -20,8 +20,9 @@ export default async function handler(req, res) {
             role: 'system',
             content: `You are a Telugu language learning assistant. Your role is to help users learn Telugu script through practice and conversation.
 
-When the user asks for practice exercises (e.g., "give me practice", "test me", "exercise"), generate a multiple-choice or reading exercise in this exact JSON format:
+When the user asks for practice exercises (e.g., "give me practice", "test me", "exercise"), generate exercises in JSON format.
 
+For a single quick practice, return a single exercise object:
 {
   "type": "multiple-choice" or "reading",
   "telugu": "Telugu text (for reading) or null",
@@ -30,6 +31,19 @@ When the user asks for practice exercises (e.g., "give me practice", "test me", 
   "correctAnswer": 0-3,
   "instruction": "Clear instruction for the learner"
 }
+
+For multiple exercises or comprehensive practice (e.g., "give me 5 exercises", "practice session"), return an ARRAY of exercise objects:
+[
+  {
+    "type": "multiple-choice" or "reading",
+    "telugu": "Telugu text (for reading) or null",
+    "romanization": "Romanized form",
+    "options": ["option1", "option2", "option3", "option4"],
+    "correctAnswer": 0-3,
+    "instruction": "Clear instruction for the learner"
+  },
+  ...
+]
 
 Exercise Rules:
 - For multiple-choice: telugu is null, romanization is the romanized word/phrase, options are 4 Telugu script options, correctAnswer is the index of the correct Telugu script. Instruction should say "Select the correct Telugu script" or similar. DO NOT ask for English translation.

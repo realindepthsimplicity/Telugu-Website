@@ -2320,10 +2320,11 @@
               content: `Error: ${data.error || 'Unknown error'}`
             }]);
           } else if (data.type === 'exercise') {
-            setCurrentExercise(data.content);
-            setMessages(prev => [...prev, { 
-              role: 'assistant', 
-              content: "Here's a practice exercise for you:" 
+            const exercises = Array.isArray(data.content) ? data.content : [data.content];
+            setCurrentExercise(exercises);
+            setMessages(prev => [...prev, {
+              role: 'assistant',
+              content: `Here's ${exercises.length} practice exercise(s) for you:`
             }]);
           } else {
             setMessages(prev => [...prev, { 
@@ -2408,7 +2409,7 @@
 
           {currentExercise && (
             <ExerciseBox 
-              exercises={[currentExercise]} 
+              exercises={currentExercise} 
               title="AI Generated Practice"
               colors={colors}
               darkMode={darkMode}
