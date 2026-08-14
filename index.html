@@ -1630,6 +1630,72 @@
         }
       ];
 
+      const distinguishExercises = [
+        {
+          type: "multiple-choice",
+          romanization: "tha",
+          options: ["థ", "ధ", "త", "ద"],
+          correctAnswer: 0,
+          instruction: "Distinguish between these similar-looking letters! Both have a small vertical line beneath. This one is unvoiced aspirated (from the tongue tip on teeth group)."
+        },
+        {
+          type: "multiple-choice",
+          romanization: "dha",
+          options: ["థ", "ధ", "త", "ద"],
+          correctAnswer: 1,
+          instruction: "Distinguish between these similar-looking letters! Both have a small vertical line beneath. This one is voiced aspirated (from the tongue tip on teeth group)."
+        },
+        {
+          type: "multiple-choice",
+          romanization: "na",
+          options: ["న", "స", "ణ", "మ"],
+          correctAnswer: 0,
+          instruction: "Distinguish between these similar-looking letters! This one is the nasal from the tongue tip on teeth group (yellow)."
+        },
+        {
+          type: "multiple-choice",
+          romanization: "sa",
+          options: ["న", "స", "ణ", "మ"],
+          correctAnswer: 1,
+          instruction: "Distinguish between these similar-looking letters! This one is the sibilant from the miscellaneous group (yellow)."
+        },
+        {
+          type: "multiple-choice",
+          romanization: "pa",
+          options: ["ప", "వ", "ష", "ఫ"],
+          correctAnswer: 0,
+          instruction: "Distinguish between these similar-looking letters (pink)! This one is the unvoiced unaspirated from the with the lips group."
+        },
+        {
+          type: "multiple-choice",
+          romanization: "va",
+          options: ["ప", "వ", "ష", "ఫ"],
+          correctAnswer: 1,
+          instruction: "Distinguish between these similar-looking letters (pink)! This one is the semivowel from the miscellaneous group."
+        },
+        {
+          type: "multiple-choice",
+          romanization: "ṣha",
+          options: ["ప", "వ", "ష", "శ"],
+          correctAnswer: 2,
+          instruction: "Distinguish between these similar-looking letters (pink)! This one is the sibilant with the tongue curled back (has a dot)."
+        },
+        {
+          type: "multiple-choice",
+          romanization: "ya",
+          options: ["య", "ఝ", "జ", "ర"],
+          correctAnswer: 0,
+          instruction: "Distinguish between these similar-looking letters (cyan)! This one is the semivowel from the miscellaneous group."
+        },
+        {
+          type: "multiple-choice",
+          romanization: "jha",
+          options: ["య", "ఝ", "జ", "ర"],
+          correctAnswer: 1,
+          instruction: "Distinguish between these similar-looking letters (cyan)! This one is the voiced aspirated from the tongue tip on roof of mouth group."
+        }
+      ];
+
       const noteContent = {
         ra: {
           title: "About Ra (ర)",
@@ -1786,6 +1852,8 @@
               />
             ))}
           </div>
+
+          <ExerciseBox exercises={distinguishExercises} title="Can you distinguish it?" colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} />
 
           <ExerciseBox exercises={alphabetExercises} title="Can you decipher it?" colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} />
 
