@@ -49,13 +49,33 @@ Rules:
     });
 
     const data = await response.json();
-    
-    if (data.error) {
-      return res.status(500).json({ error: data.error.message });
+
+    // Temporary debug logging - check this in Vercel's Logs tab
+    console.log('Groq status:', response.status);
+    console.log('Groq response:', JSON.stringify(data));
+
+    if (!response.ok) {
+      return res.status(500).json({
+        error: data.error?.message || `Groq API returned status ${response.status}`
+      });
+    }
+
+    if (!data.choices || !data.choices[0]) {
+      return res.status(500).json({ error: 'No choices returned from Groq', raw: data });
     }
 
     const content = data.choices[0].message.content;
-    
+
+    if (!content || content.trim() === '') {
+      // gpt-oss style models sometimes put the answer in reasoning instead of content
+      const fallback = data.choices[0].message.reasoning
+        || data.choices[0].message.reasoning_content;
+      if (fallback) {
+        return res.json({ type: 'conversation', content: fallback });
+      }
+      return res.status(500).json({ error: 'Model returned empty content', raw: data.choices[0].message });
+    }
+
     // Try to parse as JSON (exercise) or return as text (conversation)
     try {
       const exercise = JSON.parse(content);
@@ -65,6 +85,7 @@ Rules:
     }
 
   } catch (error) {
+    console.log('Handler error:', error);
     return res.status(500).json({ error: error.message });
   }
 }

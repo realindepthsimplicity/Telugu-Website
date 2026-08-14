@@ -2246,7 +2246,12 @@
 
           const data = await response.json();
 
-          if (data.type === 'exercise') {
+          if (!response.ok || data.error) {
+            setMessages(prev => [...prev, {
+              role: 'assistant',
+              content: `Error: ${data.error || 'Unknown error'}`
+            }]);
+          } else if (data.type === 'exercise') {
             setCurrentExercise(data.content);
             setMessages(prev => [...prev, { 
               role: 'assistant', 
@@ -2255,13 +2260,13 @@
           } else {
             setMessages(prev => [...prev, { 
               role: 'assistant', 
-              content: data.content 
+              content: data.content || "(empty response from AI)"
             }]);
           }
         } catch (error) {
           setMessages(prev => [...prev, { 
             role: 'assistant', 
-            content: "Sorry, something went wrong. Please try again." 
+            content: `Sorry, something went wrong: ${error.message}` 
           }]);
         }
 
