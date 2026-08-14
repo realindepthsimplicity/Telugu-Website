@@ -2372,18 +2372,7 @@
             {isLoading && <div style={{ color: colors.textSecondary }}>Thinking...</div>}
           </div>
 
-          {currentExercise && (
-            <ExerciseBox 
-              exercises={[currentExercise]} 
-              title="AI Generated Practice"
-              colors={colors}
-              darkMode={darkMode}
-              stickyPanel={null}
-              setStickyPanel={null}
-            />
-          )}
-
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
             <input
               type="text"
               value={input}
@@ -2416,6 +2405,17 @@
               Send
             </button>
           </div>
+
+          {currentExercise && (
+            <ExerciseBox 
+              exercises={[currentExercise]} 
+              title="AI Generated Practice"
+              colors={colors}
+              darkMode={darkMode}
+              stickyPanel={null}
+              setStickyPanel={null}
+            />
+          )}
         </div>
       );
     };
