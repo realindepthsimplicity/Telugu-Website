@@ -2433,6 +2433,176 @@
       );
     };
 
+    /* ---------------------- Page 5: English loanwords ---------------------- */
+
+    const loanwordsData = [
+      { english: "station", telugu: "నిలయం", translit: "nilayam", category: "Transportation" },
+      { english: "bus", telugu: "బస్సు", translit: "bassu", category: "Transportation" },
+      { english: "train", telugu: "రైలు", translit: "railu", category: "Transportation" },
+      { english: "ticket", telugu: "టికెటు", translit: "ṭikeṭu", category: "Transportation" },
+      { english: "mode of transport", telugu: "రవాణా", translit: "ravāṇā", category: "Transportation" },
+      { english: "time", telugu: "సమయం", translit: "samayaṁ", category: "Transportation" },
+      { english: "school", telugu: "బడి", translit: "baḍi", category: "Education" },
+      { english: "college", telugu: "కళాశాల", translit: "kaḷāshāla", category: "Education" },
+      { english: "exam", telugu: "పరీక్ష", translit: "parīkṣa", category: "Education" },
+      { english: "class", telugu: "తరగతి", translit: "taragati", category: "Education" },
+      { english: "phone", telugu: "ఫోను", translit: "phōnu", category: "Technology" },
+      { english: "computer", telugu: "కంప్యూటరు", translit: "kampyūṭaru", category: "Technology" },
+      { english: "internet", telugu: "అంతర్జాలం", translit: "antarjālaṁ", category: "Technology" },
+      { english: "message", telugu: "సందేశం", translit: "sandēshaṁ", category: "Technology" },
+      { english: "response", telugu: "సమాధానం", translit: "samādhānaṁ", category: "Technology" },
+      { english: "doctor", telugu: "వైద్యుడు", translit: "vaidyuḍu", category: "Health" },
+      { english: "hospital", telugu: "ఆసుపత్రి", translit: "āsupatri", category: "Health" },
+      { english: "medicine", telugu: "మందు", translit: "mandu", category: "Health" },
+      { english: "tablet", telugu: "మాత్ర", translit: "mātra", category: "Health" },
+      { english: "health", telugu: "ఆరోగ్యం", translit: "ārōgyaṁ", category: "Health" },
+      { english: "injurious/harmful", telugu: "హానికరం", translit: "hānikaraṁ", category: "Health" },
+      { english: "hotel", telugu: "విడిది", translit: "viḍidi", category: "Food" },
+      { english: "restaurant", telugu: "హోటలు", translit: "hōṭalu", category: "Food" },
+      { english: "coffee", telugu: "కాఫీ", translit: "kāphī", category: "Food" },
+      { english: "tea", telugu: "టీ", translit: "ṭī", category: "Food" },
+      { english: "biscuit", telugu: "బిస్కట్టు", translit: "biskaṭṭu", category: "Food" },
+      { english: "bread", telugu: "రొట్టె", translit: "roṭṭe", category: "Food" },
+      { english: "butter", telugu: "వెన్న", translit: "venna", category: "Food" },
+      { english: "office", telugu: "కార్యాలయం", translit: "kāryālayaṁ", category: "Work" },
+      { english: "company", telugu: "కంపెనీ", translit: "kampenī", category: "Work" },
+      { english: "salary", telugu: "జీతం", translit: "jītaṁ", category: "Work" },
+      { english: "job", telugu: "ఉద్యోగం", translit: "udyōgaṁ", category: "Work" },
+      { english: "hiring", telugu: "భర్తీ", translit: "bhartī", category: "Work" },
+      { english: "resignation", telugu: "రాజీనామా", translit: "rājīnāmā", category: "Work" },
+      { english: "boss", telugu: "యజమాని", translit: "yajamāni", category: "Work" },
+      { english: "meeting", telugu: "సమావేశం", translit: "samāvēshaṁ", category: "Work" },
+      { english: "reply", telugu: "జవాబు", translit: "javābu", category: "Work" },
+      { english: "colleague", telugu: "సహోద్యోగి", translit: "sahōdyōgi", category: "Work" },
+      { english: "break", telugu: "సెలవు", translit: "selavu", category: "Work" },
+      { english: "responsibility", telugu: "బాధ్యత", translit: "bādhyata", category: "Work" },
+      { english: "room", telugu: "గది", translit: "gadi", category: "Home" },
+      { english: "house", telugu: "ఇల్లు", translit: "illu", category: "Home" },
+      { english: "hall", telugu: "శాల", translit: "shāla", category: "Home" },
+      { english: "kitchen", telugu: "వంటగది", translit: "vaṇṭagadi", category: "Home" },
+      { english: "bathroom", telugu: "స్నానగది", translit: "snānagadi", category: "Home" },
+      { english: "bedroom", telugu: "పడకగది", translit: "paḍakagadi", category: "Home" },
+      { english: "drawer", telugu: "అల్మారా", translit: "almārā", category: "Home" },
+      { english: "curtain", telugu: "పరదా", translit: "paradā", category: "Home" },
+    ];
+
+    const Loanwords = ({ colors, darkMode }) => {
+      const [selectedCategory, setSelectedCategory] = useState("All");
+      
+      const categories = ["All", ...new Set(loanwordsData.map(item => item.category))];
+      
+      const filteredWords = selectedCategory === "All" 
+        ? loanwordsData 
+        : loanwordsData.filter(item => item.category === selectedCategory);
+
+      return (
+        <div>
+          <motion.header
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            style={{ marginBottom: '56px', textAlign: 'center' }}
+          >
+            <h1 className="display-text" style={{ fontSize: '48px', fontWeight: 800, lineHeight: 1.1, color: colors.text }}>
+              Writing in Standard Telugu
+            </h1>
+            <h2 className="display-text" style={{ fontSize: '24px', fontWeight: 600, marginTop: '8px', color: colors.textSecondary }}>
+              ఆంగ్ల పదాలు
+            </h2>
+            <p style={{ textAlign: 'left', maxWidth: '512px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+            Telugu is a very diverse language that has acquired a surplus of loanwords throughout its history, most notably from Sanskrit, Urdu, and more recently English.
+            </p>
+            <p style={{ textAlign: 'left', maxWidth: '512px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+            In written Standard Telugu, many of these words follow a priority order for which are considered more correct/pure, with indigenous Telugu words taking the top spot, followed by Sanskrit, then Urdu, and finally English. In the most formal registers of Telugu, such as Grānthika, Sanskrit loanwords often swap places with indigenous words.
+            </p>
+            <p style={{ textAlign: 'left', maxWidth: '512px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+            This page details the Standard Telugu equivalents of common English words often pronounced identical to their English pronunciation in colloquial conversations. Keep in mind, however, that in order to incorporate these loanwords into Standard Telugu, many of them have been heavily modified to fit Telugu's unique phonetic and grammatical requirements. Do not rely purely on the outside languages' pronunciations to deduce the correct Telugu spelling and pronunciation!
+            </p>
+          </motion.header>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', justifyContent: 'center', marginBottom: '32px' }}>
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: '20px',
+                  border: `1px solid ${colors.border}`,
+                  background: selectedCategory === category ? 'rgba(76,141,255,0.2)' : colors.cardBg,
+                  color: colors.text,
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  transition: 'all 0.3s'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.background = selectedCategory === category ? 'rgba(76,141,255,0.3)' : (darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)');
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.background = selectedCategory === category ? 'rgba(76,141,255,0.2)' : colors.cardBg;
+                }}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px', maxWidth: '1000px', margin: '0 auto' }}>
+            {filteredWords.map((word, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+                style={{
+                  borderRadius: '16px',
+                  border: `1px solid ${colors.border}`,
+                  background: colors.cardBg,
+                  padding: '24px',
+                  backdropFilter: 'blur(8px)'
+                }}
+              >
+                <div style={{ marginBottom: '8px' }}>
+                  <span style={{ 
+                    fontSize: '12px', 
+                    fontWeight: 600, 
+                    letterSpacing: '0.05em',
+                    color: BLUE,
+                    textTransform: 'uppercase'
+                  }}>
+                    {word.category}
+                  </span>
+                </div>
+                <div style={{ marginBottom: '12px' }}>
+                  <span style={{ fontSize: '14px', color: colors.textSecondary, fontStyle: 'italic' }}>
+                    English:
+                  </span>
+                  <span style={{ fontSize: '18px', fontWeight: 600, color: colors.text, marginLeft: '8px' }}>
+                    {word.english}
+                  </span>
+                </div>
+                <div style={{ marginBottom: '8px' }}>
+                  <span style={{ fontSize: '14px', color: colors.textSecondary, fontStyle: 'italic' }}>
+                    Telugu:
+                  </span>
+                  <span className="telugu-text" style={{ fontSize: '24px', fontWeight: 600, color: BLUE, marginLeft: '8px' }}>
+                    {word.telugu}
+                  </span>
+                </div>
+                <div>
+                  <span style={{ fontSize: '12px', color: colors.textSecondary }}>
+                    {word.translit}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      );
+    };
+
     /* --------------------------------- Shell --------------------------------- */
 
     const TABS = [
@@ -2441,6 +2611,7 @@
       { id: "letters", label: "Building letters" },
       { id: "reading", label: "Reading practice" },
       { id: "ko", label: "The కో particle" },
+      { id: "loanwords", label: "Writing in Standard Telugu" },
       { id: "chatbot", label: "AI Practice" },
     ];
 
@@ -2448,6 +2619,23 @@
       const [active, setActive] = useState("intro");
       const [darkMode, setDarkMode] = useState(true);
       const [stickyPanel, setStickyPanel] = useState(null);
+      const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 768);
+      const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+      React.useEffect(() => {
+        const handleResize = () => {
+          const mobile = window.innerWidth < 768;
+          setIsMobile(mobile);
+          if (mobile && sidebarOpen) {
+            setSidebarOpen(false);
+          } else if (!mobile && !sidebarOpen) {
+            setSidebarOpen(true);
+          }
+        };
+        
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+      }, [sidebarOpen]);
 
       const colors = darkMode ? {
         bg: DARK_BG,
@@ -2499,6 +2687,58 @@
           <div style={{ position: 'fixed', bottom: '-160px', right: '-160px', height: '384px', width: '384px', borderRadius: '50%', background: colors.glow2, filter: 'blur(120px)', pointerEvents: 'none' }} />
           <div style={{ position: 'fixed', top: '33.33%', right: '25%', height: '288px', width: '288px', borderRadius: '50%', background: colors.glow3, filter: 'blur(120px)', pointerEvents: 'none' }} />
 
+          {/* Overlay behind sidebar on mobile when open, tap to close */}
+          {sidebarOpen && isMobile && (
+            <div
+              onClick={() => setSidebarOpen(false)}
+              style={{
+                position: 'fixed',
+                inset: 0,
+                zIndex: 25,
+                background: 'rgba(0,0,0,0.5)'
+              }}
+            />
+          )}
+
+          {/* Expand button when sidebar is collapsed (desktop only) */}
+          {!sidebarOpen && !isMobile && (
+            <button
+              onClick={() => setSidebarOpen(true)}
+              style={{
+                position: 'fixed',
+                top: '50%',
+                left: '16px',
+                transform: 'translateY(-50%)',
+                zIndex: 35,
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                border: `1px solid ${colors.border}`,
+                background: colors.navBg,
+                backdropFilter: 'blur(24px)',
+                color: colors.text,
+                fontSize: '16px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.2s ease',
+                boxShadow: darkMode ? '0 4px 12px rgba(0,0,0,0.3)' : '0 4px 12px rgba(0,0,0,0.1)'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.borderColor = BLUE;
+                e.target.style.background = darkMode ? 'rgba(76,141,255,0.1)' : 'rgba(76,141,255,0.05)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.borderColor = colors.border;
+                e.target.style.background = colors.navBg;
+              }}
+              title="Expand sidebar"
+            >
+              ▶
+            </button>
+          )}
+
           {/* Sidebar navigation — fixed, so it stays visible regardless of scroll position */}
           <div style={{
             position: 'fixed',
@@ -2514,14 +2754,17 @@
             borderRight: `1px solid ${colors.border}`,
             background: colors.navBg,
             backdropFilter: 'blur(24px)',
-            overflowY: 'auto'
+            overflowY: 'auto',
+            transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
+            transition: 'transform 0.25s ease'
           }}>
+
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
               {TABS.map((tab) => (
                 <button
                   key={tab.id}
                   data-testid={`tab-${tab.id}`}
-                  onClick={() => setActive(tab.id)}
+                  onClick={() => { setActive(tab.id); if (isMobile) setSidebarOpen(false); }}
                   style={{
                     position: 'relative',
                     borderRadius: '12px',
@@ -2587,9 +2830,52 @@
             >
               {darkMode ? '☀️ Light mode' : '🌙 Dark mode'}
             </button>
+
+            {/* Sidebar collapse button */}
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              style={{
+                marginTop: '12px',
+                padding: '10px 16px',
+                borderRadius: '9999px',
+                border: `1px solid ${colors.border}`,
+                background: colors.tabBg,
+                color: colors.text,
+                fontSize: '14px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                backdropFilter: 'blur(24px)',
+                width: '100%',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.borderColor = BLUE;
+                e.target.style.background = darkMode ? 'rgba(76,141,255,0.1)' : 'rgba(76,141,255,0.05)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.borderColor = colors.border;
+                e.target.style.background = colors.tabBg;
+              }}
+              title={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+            >
+              {sidebarOpen ? '◀ Collapse' : '▶ Expand'}
+            </button>
           </div>
 
-          <main style={{ position: 'relative', zIndex: 10, marginLeft: '224px', width: 'calc(100% - 224px)', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '48px 48px 96px 48px' }}>
+            <main style={{
+            position: 'relative',
+            zIndex: 10,
+            marginLeft: sidebarOpen && !isMobile ? '224px' : '0',
+            width: sidebarOpen && !isMobile ? 'calc(100% - 224px)' : '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            padding: isMobile ? '48px 20px 96px 20px' : '48px 48px 96px 48px',
+            transition: 'margin-left 0.25s ease, width 0.25s ease'
+          }}>
             <div style={{ width: '100%', maxWidth: '896px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
             <AnimatePresence mode="wait">
               <motion.div
@@ -2601,7 +2887,7 @@
                 transition={{ duration: 0.3 }}
                 style={{ width: '100%' }}
               >
-                {active === "ko" ? <KoLesson colors={colors} darkMode={darkMode} /> : active === "letters" ? <LettersLesson colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} /> : active === "reading" ? <ReadingPractice colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} /> : active === "intro" ? <IntroLesson setActive={setActive} colors={colors} darkMode={darkMode} /> : active === "chatbot" ? <ChatBot colors={colors} darkMode={darkMode} /> : <ConsonantsLesson setActive={setActive} colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} />}
+                {active === "ko" ? <KoLesson colors={colors} darkMode={darkMode} /> : active === "loanwords" ? <Loanwords colors={colors} darkMode={darkMode} /> : active === "letters" ? <LettersLesson colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} /> : active === "reading" ? <ReadingPractice colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} /> : active === "intro" ? <IntroLesson setActive={setActive} colors={colors} darkMode={darkMode} /> : active === "chatbot" ? <ChatBot colors={colors} darkMode={darkMode} /> : <ConsonantsLesson setActive={setActive} colors={colors} darkMode={darkMode} stickyPanel={stickyPanel} setStickyPanel={setStickyPanel} />}
               </motion.div>
             </AnimatePresence>
             </div>
