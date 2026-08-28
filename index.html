@@ -28,13 +28,44 @@
     .display-text {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
+
+    /* Responsive font scaling */
+    :root {
+      --font-scale: 1;
+    }
+
+    @media (max-width: 768px) {
+      :root {
+        --font-scale: 0.85;
+      }
+    }
+
+    @media (max-width: 480px) {
+      :root {
+        --font-scale: 0.75;
+      }
+    }
+
+    @media (max-width: 360px) {
+      :root {
+        --font-scale: 0.65;
+      }
+    }
   </style>
 </head>
 <body>
   <div id="root" style="min-height: 100vh; background: #0a0a0c; color: white; padding: 20px;">Loading...</div>
   <script type="text/babel">
     const { useState } = React;
-    
+
+    // Responsive font scaling function
+    const getResponsiveSize = (baseSize) => {
+      const scale = window.innerWidth < 768 ? 0.85 : 
+                   window.innerWidth < 480 ? 0.75 : 
+                   window.innerWidth < 360 ? 0.65 : 1;
+      return `${parseFloat(baseSize) * scale}px`;
+    };
+
     // Fallback if Motion doesn't load
     const Motion = window.FramerMotion || window.framerMotion || window.Motion;
     let motion, AnimatePresence;
@@ -198,10 +229,10 @@
           </div>
 
           <div style={{
-            borderRadius: '24px',
+            borderRadius: window.innerWidth < 768 ? '16px' : '24px',
             border: `1px solid ${colors.border}`,
             background: colors.cardBg,
-            padding: '40px 56px',
+            padding: window.innerWidth < 768 ? '24px 32px' : '40px 56px',
             backdropFilter: 'blur(8px)',
             width: '100%',
             maxWidth: '768px'
@@ -210,7 +241,7 @@
               <div
                 data-testid={`${unit.id}-telugu`}
                 className="telugu-text"
-                style={{ fontSize: '48px', lineHeight: 1.1, color: colors.text }}
+                style={{ fontSize: window.innerWidth < 768 ? '32px' : '48px', lineHeight: 1.1, color: colors.text }}
               >
                 {unit.teluguParts.map((p, i) => (
                   <span key={i} style={{ color: p.color }}>
@@ -262,17 +293,17 @@
 
             <div
               data-testid={`${unit.id}-translit`}
-              style={{ marginTop: '12px', fontSize: '18px', fontStyle: 'italic', color: colors.textSecondary }}
+              style={{ marginTop: '12px', fontSize: window.innerWidth < 768 ? '14px' : '18px', fontStyle: 'italic', color: colors.textSecondary }}
             >
               {unit.translit}
             </div>
 
-            <div style={{ margin: '28px 0', height: '1px', width: '64px', background: colors.border }} />
+            <div style={{ margin: window.innerWidth < 768 ? '16px 0' : '28px 0', height: '1px', width: '64px', background: colors.border }} />
 
             <div
               data-testid={`${unit.id}-english`}
               className="display-text"
-              style={{ fontSize: '24px', fontWeight: 600 }}
+              style={{ fontSize: window.innerWidth < 768 ? '18px' : '24px', fontWeight: 600 }}
             >
               {unit.englishParts.map((p, i) => (
                 <span key={i} style={{ color: p.color }}>
@@ -291,12 +322,12 @@
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          style={{ marginBottom: '56px', textAlign: 'center' }}
+          style={{ marginBottom: window.innerWidth < 768 ? '32px' : '56px', textAlign: 'center' }}
         >
-          <h1 className="display-text" style={{ fontSize: '48px', fontWeight: 800, lineHeight: 1.1, color: colors.text }}>
+          <h1 className="display-text" style={{ fontSize: window.innerWidth < 768 ? '32px' : '48px', fontWeight: 800, lineHeight: 1.1, color: colors.text }}>
             The <span className="telugu-text" style={{ color: ORANGE }}>కో</span> particle
           </h1>
-          <p style={{ textAlign: 'left', maxWidth: '448px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary }}>
+          <p style={{ textAlign: 'left', maxWidth: window.innerWidth < 768 ? '100%' : '448px', margin: '20px auto 0', fontSize: window.innerWidth < 768 ? '14px' : '16px', color: colors.textSecondary }}>
             One small suffix turns an action into something you do{" "}
             <span style={{ color: ORANGE }}>for yourself</span>. Tap the speaker on any
             card to hear it spoken.
@@ -378,19 +409,19 @@
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
+            gap: window.innerWidth < 768 ? '8px' : '12px',
             overflowX: 'auto',
             borderRadius: '16px',
             border: `1px solid ${colors.border}`,
             background: colors.cardBg,
-            padding: '24px 40px',
+            padding: window.innerWidth < 768 ? '16px 24px' : '24px 40px',
             backdropFilter: 'blur(8px)',
             width: '100%',
             maxWidth: '768px'
           }}>
             <span
               className="telugu-text"
-              style={{ fontSize: '48px', color: BLUE, flexShrink: 0 }}
+              style={{ fontSize: window.innerWidth < 768 ? '32px' : '48px', color: BLUE, flexShrink: 0 }}
             >
               {CONSONANT}
             </span>
@@ -399,7 +430,7 @@
 
             <span
               className="telugu-text"
-              style={{ fontSize: '48px', color: PURPLE, flexShrink: 0 }}
+              style={{ fontSize: window.innerWidth < 768 ? '32px' : '48px', color: PURPLE, flexShrink: 0 }}
             >
               {vowel}
             </span>
@@ -408,7 +439,7 @@
 
             <span
               className="telugu-text"
-              style={{ fontSize: '48px', color: ORANGE, flexShrink: 0 }}
+              style={{ fontSize: window.innerWidth < 768 ? '32px' : '48px', color: ORANGE, flexShrink: 0 }}
             >
               {combiningForm}
             </span>
@@ -418,13 +449,13 @@
             <span
               data-testid={`row-${index + 1}-result`}
               className="telugu-text"
-              style={{ fontSize: '56px', flexShrink: 0 }}
+              style={{ fontSize: window.innerWidth < 768 ? '36px' : '56px', flexShrink: 0 }}
             >
               <span style={{ color: BLUE }}>{CONSONANT}</span>
               {matra && <span style={{ color: PURPLE }}>{matra}</span>}
             </span>
 
-            <span style={{ marginLeft: 'auto', flexShrink: 0, paddingLeft: '16px', fontSize: '18px', fontStyle: 'italic', color: colors.textSecondary }}>
+            <span style={{ marginLeft: 'auto', flexShrink: 0, paddingLeft: '16px', fontSize: window.innerWidth < 768 ? '14px' : '18px', fontStyle: 'italic', color: colors.textSecondary }}>
               {roman}
             </span>
           </div>
@@ -814,15 +845,15 @@
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          style={{ marginBottom: '56px', textAlign: 'center' }}
+          style={{ marginBottom: window.innerWidth < 768 ? '32px' : '56px', textAlign: 'center' }}
         >
-          <h1 className="display-text" style={{ fontSize: '48px', fontWeight: 800, lineHeight: 1.1 }}>
+          <h1 className="display-text" style={{ fontSize: window.innerWidth < 768 ? '32px' : '48px', fontWeight: 800, lineHeight: 1.1 }}>
             Building letters
           </h1>
-          <h2 className="display-text" style={{ fontSize: '24px', fontWeight: 600, marginTop: '8px', color: colors.textSecondary }}>
+          <h2 className="display-text" style={{ fontSize: window.innerWidth < 768 ? '18px' : '24px', fontWeight: 600, marginTop: '8px', color: colors.textSecondary }}>
             Combining vowels
           </h2>
-          <p style={{ textAlign: 'left', maxWidth: '512px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary }}>
+          <p style={{ textAlign: 'left', maxWidth: window.innerWidth < 768 ? '100%' : '512px', margin: '20px auto 0', fontSize: window.innerWidth < 768 ? '14px' : '16px', color: colors.textSecondary }}>
             With the exception of semivowels, all Telugu consonants must combine with a vowel to exist. In their pure form, they are always combined with the short a vowel, అ.
           </p>
           <p style={{ textAlign: 'left', maxWidth: '512px', margin: '12px auto 0', fontSize: '16px', color: colors.textSecondary }}>
@@ -1737,12 +1768,12 @@
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            style={{ marginBottom: '56px', textAlign: 'center' }}
+            style={{ marginBottom: window.innerWidth < 768 ? '32px' : '56px', textAlign: 'center' }}
           >
-            <h1 className="display-text" style={{ fontSize: '48px', fontWeight: 800, lineHeight: 1.1 }}>
+            <h1 className="display-text" style={{ fontSize: window.innerWidth < 768 ? '32px' : '48px', fontWeight: 800, lineHeight: 1.1 }}>
               <span className="telugu-text" style={{ color: BLUE }}>Consonants</span>
             </h1>
-            <p style={{ textAlign: 'left', maxWidth: '512px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+            <p style={{ textAlign: 'left', maxWidth: window.innerWidth < 768 ? '100%' : '512px', margin: '20px auto 0', fontSize: window.innerWidth < 768 ? '14px' : '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
               Unlike Latin consonants (like "k") which represent a single sound, Telugu consonants in their basic form represent a full syllable consisting of a consonant sound followed by a short "a" sound. In other words, the consonant is always "combined" with a vowel when written and spoken, rather than being a standalone consonant.
             </p>
             <p style={{ textAlign: 'left', maxWidth: '512px', margin: '12px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
@@ -1993,9 +2024,9 @@
             </span>
           </div>
 
-          <p className="telugu-text" style={{ 
-            fontSize: '28px', 
-            color: colors.text, 
+          <p className="telugu-text" style={{
+            fontSize: window.innerWidth < 768 ? '20px' : '28px',
+            color: colors.text,
             lineHeight: 1.6,
             marginBottom: '16px'
           }}>
@@ -2106,15 +2137,15 @@
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            style={{ marginBottom: '56px', textAlign: 'center' }}
+            style={{ marginBottom: window.innerWidth < 768 ? '32px' : '56px', textAlign: 'center' }}
           >
-            <h1 className="display-text" style={{ fontSize: '48px', fontWeight: 800, lineHeight: 1.1, color: colors.text }}>
+            <h1 className="display-text" style={{ fontSize: window.innerWidth < 768 ? '32px' : '48px', fontWeight: 800, lineHeight: 1.1, color: colors.text }}>
               Reading Practice
             </h1>
-            <h2 className="display-text" style={{ fontSize: '24px', fontWeight: 600, marginTop: '8px', color: colors.textSecondary }}>
+            <h2 className="display-text" style={{ fontSize: window.innerWidth < 768 ? '18px' : '24px', fontWeight: 600, marginTop: '8px', color: colors.textSecondary }}>
               చదవడం ప్రాక్టీస్
             </h2>
-            <p style={{ textAlign: 'left', maxWidth: '512px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+            <p style={{ textAlign: 'left', maxWidth: window.innerWidth < 768 ? '100%' : '512px', margin: '20px auto 0', fontSize: window.innerWidth < 768 ? '14px' : '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
               Practice reading Telugu with texts of increasing difficulty. Start with the easy level and work your way up. Each text includes an English translation to help you. Use the designated button below each text to keep it visible in a side panel while you scroll or reference previous tabs. Check your work with the romanization button!
             </p>
           </motion.header>
@@ -2143,14 +2174,14 @@
         number: "01",
         titleTelugu: "అక్షరమాల",
         title: "Alphabet",
-        description: "Meet the consonants, semivowels, and vowels of the Telugu script — how they're grouped by sound, and the vattu forms used to build consonant clusters.",
+        description: "Meet the consonants, semivowels, and vowels of the Telugu script — how they're grouped by sound, and the forms used to build consonant clusters.",
       },
       {
         id: "letters",
         number: "02",
         titleTelugu: "అక్షరాలను\nకట్టడం",
         title: "Building letters",
-        description: "Learn how a consonant and a vowel combine into a single written letter, including the irregular combinations that don't follow the standard pattern.",
+        description: "Learn how a consonant, another consonant, and a vowel can combine into a single syllabic letter, including the irregular combinations that don't follow the standard patterns.",
       },
       {
         id: "reading",
@@ -2166,9 +2197,23 @@
         title: "The కో particle",
         description: "A worked example of Telugu grammar in action: see how attaching కో to a verb changes its meaning to something done for oneself.",
       },
+      {
+        id: "loanwords",
+        number: "05",
+        titleTelugu: "ప్రామాణిక\nతెలుగులో\nవ్రాయడం",
+        title: "Writing in Standard Telugu",
+        description: "Learn the Standard Telugu equivalents of common English loanwords — understand how foreign words are adapted to fit Telugu's phonetic and grammatical rules.",
+      },
+      {
+        id: "chatbot",
+        number: "06",
+        titleTelugu: "కృత్రిమ\nమేధ\nసహాయం",
+        title: "AI Practice Assistant",
+        description: "Practice interactively with an AI chatbot that can generate custom exercises, answer questions, and help you master challenging Telugu concepts.",
+      },
     ];
 
-    const IntroCard = ({ card, onOpen, colors, darkMode }) => (
+    const IntroCard = ({ card, onOpen, colors, darkMode, isLast }) => (
       <motion.div
         data-testid={`intro-card-${card.id}`}
         initial={{ opacity: 0, y: 30 }}
@@ -2179,13 +2224,13 @@
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '24px',
+          gap: window.innerWidth < 768 ? '16px' : '24px',
           width: '100%',
           maxWidth: '640px',
           borderRadius: '20px',
           border: `1px solid ${colors.border}`,
           background: colors.cardBg,
-          padding: '28px 32px',
+          padding: isLast ? (window.innerWidth < 768 ? '24px 24px' : '32px 32px') : (window.innerWidth < 768 ? '20px 24px' : '28px 32px'),
           backdropFilter: 'blur(8px)',
           cursor: 'pointer',
           transition: 'all 0.3s'
@@ -2201,27 +2246,27 @@
       >
         <span
           className="display-text"
-          style={{ fontSize: '14px', fontWeight: 600, letterSpacing: '0.2em', color: colors.textSecondary, flexShrink: 0 }}
+          style={{ fontSize: window.innerWidth < 768 ? '12px' : '14px', fontWeight: 600, letterSpacing: '0.2em', color: colors.textSecondary, flexShrink: 0 }}
         >
           {card.number}
         </span>
 
-        <div className="telugu-text" style={{ fontSize: '40px', color: BLUE, flexShrink: 0, minWidth: '90px', display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: 1.2, whiteSpace: 'pre-line' }}>
+        <div className="telugu-text" style={{ fontSize: window.innerWidth < 768 ? '32px' : '40px', color: BLUE, flexShrink: 0, minWidth: window.innerWidth < 768 ? '70px' : '90px', display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: isLast ? 1.4 : 1.2, whiteSpace: 'pre-line' }}>
           {card.titleTelugu}
         </div>
 
         <div style={{ flex: 1, textAlign: 'left' }}>
-          <h3 className="display-text" style={{ fontSize: '20px', fontWeight: 700, color: colors.text, marginBottom: '4px' }}>
+          <h3 className="display-text" style={{ fontSize: window.innerWidth < 768 ? '16px' : '20px', fontWeight: 700, color: colors.text, marginBottom: '4px' }}>
             {card.title}
           </h3>
-          <p style={{ fontSize: '14px', color: colors.textSecondary, lineHeight: 1.5, textAlign: 'left' }}>
+          <p style={{ fontSize: window.innerWidth < 768 ? '12px' : '14px', color: colors.textSecondary, lineHeight: 1.5, textAlign: 'left' }}>
             {card.description}
           </p>
         </div>
 
         <span
           className="display-text"
-          style={{ fontSize: '20px', color: BLUE, flexShrink: 0 }}
+          style={{ fontSize: window.innerWidth < 768 ? '16px' : '20px', color: BLUE, flexShrink: 0 }}
         >
           →
         </span>
@@ -2234,15 +2279,15 @@
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          style={{ marginBottom: '48px', textAlign: 'center' }}
+          style={{ marginBottom: window.innerWidth < 768 ? '32px' : '48px', textAlign: 'center' }}
         >
-          <h1 className="display-text" style={{ fontSize: '48px', fontWeight: 800, lineHeight: 1.1, color: colors.text }}>
+          <h1 className="display-text" style={{ fontSize: window.innerWidth < 768 ? '32px' : '48px', fontWeight: 800, lineHeight: 1.1, color: colors.text }}>
             <span className="telugu-text" style={{ color: ORANGE }}>స్వాగతం</span> — Welcome
           </h1>
-          <h2 className="display-text" style={{ fontSize: '24px', fontWeight: 600, marginTop: '8px', color: colors.textSecondary }}>
+          <h2 className="display-text" style={{ fontSize: window.innerWidth < 768 ? '18px' : '24px', fontWeight: 600, marginTop: '8px', color: colors.textSecondary }}>
             Learn Telugu script in a jiffy
           </h2>
-          <div style={{ textAlign: 'left', maxWidth: '560px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+          <div style={{ textAlign: 'left', maxWidth: window.innerWidth < 768 ? '100%' : '560px', margin: '20px auto 0', fontSize: window.innerWidth < 768 ? '14px' : '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
             <p style={{ marginBottom: '16px' }}>
               This site is intended as a crash course for Telugu speakers to read and understand written and formal Telugu (తెలుగు), and is intended to promote literacy of the language.
             </p>
@@ -2256,21 +2301,23 @@
               Tap any speaker icon (🔊) to hear a sound spoken aloud, and click any "!" marker to see a usage note. Also be sure to read any and all text boxes across the pages explaining how different things work so you don't get lost!
             </p>
             <p>
-              Use the tabs on the left — or the cards below — to move between pages (and cross-reference previous ones)! Start with 'Alphabet' and work your way down!
+              Use the tabs on the left — or the cards below — to move between pages (and cross-reference previous ones)! If the left tab menu is collapsed, press either the three lines button or the outward-facing arrow on the left hand side. Start with 'Alphabet' and work your way down!
             </p>
           </div>
         </motion.header>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', width: '100%' }}>
-          {introCards.map((card) => (
+          {introCards.map((card, index) => (
             <IntroCard
               key={card.id}
               card={card}
               colors={colors}
               darkMode={darkMode}
+              isLast={index === introCards.length - 1}
               onOpen={() => { setActive(card.id); window.scrollTo(0, 0); }}
             />
           ))}
+          <div style={{ height: '16px' }} />
         </div>
 
         <motion.div
@@ -2280,8 +2327,8 @@
           transition={{ duration: 0.6 }}
           style={{ marginTop: '80px', textAlign: 'center', padding: '32px', borderRadius: '16px', background: darkMode ? 'rgba(180,139,255,0.1)' : 'rgba(180,139,255,0.05)', border: `1px solid ${colors.border}` }}
         >
-          <p style={{ textAlign: 'left', fontSize: '16px', color: colors.textSecondary, maxWidth: '560px', margin: '0 auto', lineHeight: 1.6 }}>
-            New here? Start with <span onClick={() => { setActive('consonants'); window.scrollTo(0, 0); }} style={{ color: BLUE, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Alphabet</span> to learn the letters, then move on to <span onClick={() => { setActive('letters'); window.scrollTo(0, 0); }} style={{ color: BLUE, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Building letters</span> and <span onClick={() => { setActive('ko'); window.scrollTo(0, 0); }} style={{ color: BLUE, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>The కో particle</span> to see it all put to use, then practice with <span onClick={() => { setActive('reading'); window.scrollTo(0, 0); }} style={{ color: BLUE, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Reading practice</span>.
+          <p style={{ textAlign: 'left', fontSize: window.innerWidth < 768 ? '14px' : '16px', color: colors.textSecondary, maxWidth: window.innerWidth < 768 ? '100%' : '560px', margin: '0 auto', lineHeight: 1.6 }}>
+            New here? Start with <span onClick={() => { setActive('consonants'); window.scrollTo(0, 0); }} style={{ color: BLUE, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Alphabet</span> to learn the letters, then move on to <span onClick={() => { setActive('letters'); window.scrollTo(0, 0); }} style={{ color: BLUE, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Building letters</span> and <span onClick={() => { setActive('ko'); window.scrollTo(0, 0); }} style={{ color: BLUE, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>The కో particle</span> to see it all put to use, then practice with <span onClick={() => { setActive('reading'); window.scrollTo(0, 0); }} style={{ color: BLUE, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Reading practice</span>. For advanced learners, explore <span onClick={() => { setActive('loanwords'); window.scrollTo(0, 0); }} style={{ color: BLUE, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>Writing in Standard Telugu</span> and get personalized help with the <span onClick={() => { setActive('chatbot'); window.scrollTo(0, 0); }} style={{ color: BLUE, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>AI Practice Assistant</span>.
           </p>
         </motion.div>
       </div>
@@ -2356,7 +2403,7 @@
             border: `1px solid ${colors.border}`
           }}>
             <p style={{ fontSize: '14px', color: colors.textSecondary, lineHeight: 1.6, margin: 0 }}>
-              This AI chatbot is still in the Alpha phase. You can use it to ask questions about challenging concepts and generate interactive, multiple-choice exercises to practice your Telugu further. Sometimes, the chatbot will generate the challenge in text and not use the interactive interface. If it does this, simply type "display the exercise", and it will appear as an interactive exercise below the prompt bar!
+              This AI chatbot is still in the Alpha phase. You can use it to ask questions about challenging concepts and generate interactive, multiple-choice exercises to practice your Telugu further. Sometimes, the chatbot will generate the challenge in text and not display it as an interactive exercise. If it does this, simply type "display the exercise", and it will appear as an interactive exercise below the prompt bar!
             </p>
           </div>
 
@@ -2501,15 +2548,15 @@
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            style={{ marginBottom: '56px', textAlign: 'center' }}
+            style={{ marginBottom: window.innerWidth < 768 ? '32px' : '56px', textAlign: 'center' }}
           >
-            <h1 className="display-text" style={{ fontSize: '48px', fontWeight: 800, lineHeight: 1.1, color: colors.text }}>
+            <h1 className="display-text" style={{ fontSize: window.innerWidth < 768 ? '32px' : '48px', fontWeight: 800, lineHeight: 1.1, color: colors.text }}>
               Writing in Standard Telugu
             </h1>
-            <h2 className="display-text" style={{ fontSize: '24px', fontWeight: 600, marginTop: '8px', color: colors.textSecondary }}>
+            <h2 className="display-text" style={{ fontSize: window.innerWidth < 768 ? '18px' : '24px', fontWeight: 600, marginTop: '8px', color: colors.textSecondary }}>
               ఆంగ్ల పదాలు
             </h2>
-            <p style={{ textAlign: 'left', maxWidth: '512px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
+            <p style={{ textAlign: 'left', maxWidth: window.innerWidth < 768 ? '100%' : '512px', margin: '20px auto 0', fontSize: window.innerWidth < 768 ? '14px' : '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
             Telugu is a very diverse language that has acquired a surplus of loanwords throughout its history, most notably from Sanskrit, Urdu, and more recently English.
             </p>
             <p style={{ textAlign: 'left', maxWidth: '512px', margin: '20px auto 0', fontSize: '16px', color: colors.textSecondary, lineHeight: 1.6 }}>
@@ -2626,16 +2673,21 @@
         const handleResize = () => {
           const mobile = window.innerWidth < 768;
           setIsMobile(mobile);
-          if (mobile && sidebarOpen) {
+          // On mobile, always close sidebar initially
+          if (mobile) {
             setSidebarOpen(false);
-          } else if (!mobile && !sidebarOpen) {
+          } else {
+            // On desktop, open sidebar by default
             setSidebarOpen(true);
           }
         };
-        
+
+        // Initial check
+        handleResize();
+
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
-      }, [sidebarOpen]);
+      }, []);
 
       const colors = darkMode ? {
         bg: DARK_BG,
@@ -2700,24 +2752,24 @@
             />
           )}
 
-          {/* Expand button when sidebar is collapsed (desktop only) */}
-          {!sidebarOpen && !isMobile && (
+          {/* Expand button when sidebar is collapsed */}
+          {!sidebarOpen && (
             <button
               onClick={() => setSidebarOpen(true)}
               style={{
                 position: 'fixed',
-                top: '50%',
+                top: isMobile ? '20px' : '50%',
                 left: '16px',
-                transform: 'translateY(-50%)',
+                transform: isMobile ? 'none' : 'translateY(-50%)',
                 zIndex: 35,
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
+                width: isMobile ? '44px' : '40px',
+                height: isMobile ? '44px' : '40px',
+                borderRadius: isMobile ? '12px' : '50%',
                 border: `1px solid ${colors.border}`,
                 background: colors.navBg,
                 backdropFilter: 'blur(24px)',
                 color: colors.text,
-                fontSize: '16px',
+                fontSize: isMobile ? '20px' : '16px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -2735,7 +2787,7 @@
               }}
               title="Expand sidebar"
             >
-              ▶
+              {isMobile ? '☰' : '▶'}
             </button>
           )}
 
@@ -2873,7 +2925,7 @@
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            padding: isMobile ? '48px 20px 96px 20px' : '48px 48px 96px 48px',
+            padding: isMobile ? '80px 16px 96px 16px' : '48px 48px 96px 48px',
             transition: 'margin-left 0.25s ease, width 0.25s ease'
           }}>
             <div style={{ width: '100%', maxWidth: '896px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
