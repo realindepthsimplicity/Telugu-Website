@@ -2391,11 +2391,14 @@
 
       return (
         <div style={{ padding: '32px', maxWidth: '800px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '32px', color: colors.text, marginBottom: '24px' }}>
+          <h2 style={{ fontSize: window.innerWidth < 768 ? '24px' : '32px', color: colors.text, marginBottom: '8px' }}>
             AI Practice Assistant
           </h2>
+          <h3 className="telugu-text" style={{ fontSize: window.innerWidth < 768 ? '18px' : '24px', fontWeight: 600, marginTop: '8px', marginBottom: '24px', color: colors.textSecondary }}>
+            కృత్రిమ మేధ సహాయం
+          </h3>
 
-          <div style={{ 
+          <div style={{
             padding: '16px',
             marginBottom: '24px',
             borderRadius: '12px',
